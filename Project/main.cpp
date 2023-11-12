@@ -1,14 +1,50 @@
 #include <iostream>
 #include "GL/freeglut.h"
 #include "Constants.h"
+#include "Stage.h"
+#include "Platform.h"
 
 using namespace std;
 
 clock_t start_t = clock();
 clock_t end_t;
+vector<Stage> stages;
 
 void initialize() {
+	Stage stage1(1);
+	vector<string> platformInfo;
+	platformInfo.push_back("¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á");
+	platformInfo.push_back("¡á¡á                                                ¡á¡á");
+	platformInfo.push_back("¡á¡á                                                ¡á¡á");
+	platformInfo.push_back("¡á¡á                                                ¡á¡á");
+	platformInfo.push_back("¡á¡á                                                ¡á¡á");
+	platformInfo.push_back("¡á¡á                                                ¡á¡á");
+	platformInfo.push_back("¡á¡á                                                ¡á¡á");
+	platformInfo.push_back("¡á¡á                                                ¡á¡á");
+	platformInfo.push_back("¡á¡á                                                ¡á¡á");
+	platformInfo.push_back("¡á¡á                                                ¡á¡á");
+	platformInfo.push_back("¡á¡á                                                ¡á¡á");
+	platformInfo.push_back("¡á¡á                                                ¡á¡á");
+	platformInfo.push_back("¡á¡á¢Ã¢Ã    ¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã    ¢Ã¢Ã¡á¡á");
+	platformInfo.push_back("¡á¡á                                                ¡á¡á");
+	platformInfo.push_back("¡á¡á                                                ¡á¡á");
+	platformInfo.push_back("¡á¡á                                                ¡á¡á");
+	platformInfo.push_back("¡á¡á                                                ¡á¡á");
+	platformInfo.push_back("¡á¡á¢Ã¢Ã    ¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã    ¢Ã¢Ã¡á¡á");
+	platformInfo.push_back("¡á¡á                                                ¡á¡á");
+	platformInfo.push_back("¡á¡á                                                ¡á¡á");
+	platformInfo.push_back("¡á¡á                                                ¡á¡á");
+	platformInfo.push_back("¡á¡á                                                ¡á¡á");
+	platformInfo.push_back("¡á¡á¢Ã¢Ã    ¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã    ¢Ã¢Ã¡á¡á");
+	platformInfo.push_back("¡á¡á                                                ¡á¡á");
+	platformInfo.push_back("¡á¡á                                                ¡á¡á");
+	platformInfo.push_back("¡á¡á                                                ¡á¡á");
+	platformInfo.push_back("¡á¡á                                                ¡á¡á");
+	platformInfo.push_back("¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á");
 
+	stage1.setStagePlatform(platformInfo);
+	stages.push_back(stage1);
+	platformInfo.clear();
 }
 
 
@@ -34,7 +70,7 @@ void display() {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	glutWireCube(50.0f);
+	stages[0].draw();
 
 	glutSwapBuffers();
 }
