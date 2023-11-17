@@ -151,12 +151,26 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Bubble.cpp" />
+    <ClCompile Include="Light.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Material.cpp" />
     <ClCompile Include="Platform.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="Stage.cpp" />
+    <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="Vector3f.cpp" />
+    <ClCompile Include="Vector4f.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Constants.h" />
+    <ClInclude Include="include\Bubble.h" />
+    <ClInclude Include="include\Light.h" />
+    <ClInclude Include="include\Material.h" />
+    <ClInclude Include="include\Player.h" />
+    <ClInclude Include="include\Texture.h" />
+    <ClInclude Include="include\Vector3f.h" />
+    <ClInclude Include="include\Vector4f.h" />
     <ClInclude Include="Platform.h" />
     <ClInclude Include="Stage.h" />
   </ItemGroup>

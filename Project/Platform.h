@@ -1,6 +1,8 @@
 #pragma once
 #include "GL/freeglut.h"
 #include "Constants.h"
+#include "Vector3f.h"
+#include <string>
 
 class Platform
 {
@@ -19,6 +21,6 @@ private:
 	float width;
 	float x;
 	float y;
-	PLATFORM type;
+	PLATFORM Platformtype;
 };
 

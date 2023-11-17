@@ -21,8 +21,13 @@ void Stage::setStagePlatform(std::vector<std::string> info) {
 		y += 1.0f;
 	}
 }
+std::vector<Platform> Stage::getStagePlatform() {
+
+	return platforms;
+}
 
 void Stage::draw() {
+
 	for (auto& p : platforms) {
 		p.draw();
 	}

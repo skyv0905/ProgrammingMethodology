@@ -11,7 +11,9 @@ public:
 	Stage(int ID) : stageID(ID) {};
 
 	void setStagePlatform(std::vector<std::string> info);
+	std::vector<Platform> getStagePlatform();
 	void draw();
+	void move();
 
 private:
 	int stageID;
