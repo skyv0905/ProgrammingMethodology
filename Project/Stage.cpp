@@ -32,9 +32,35 @@ std::vector<Platform> Stage::getStagePlatform() {
 	return platforms;
 }
 
+float Stage::getFirstTransition() { // 화면 전환 관리
+	return firstTransition;
+}
+
+float Stage::getSecondTransition() {
+	return secondTransition;
+}
+
+void Stage::startFirstTransition() {
+	firstTransition = -700.0f;
+}
+
+void Stage::startSecondTransition() {
+	secondTransition = 700.0f;
+}
+
 void Stage::draw() {
 
 	for (auto& p : platforms) {
 		p.draw();
+	}
+}
+
+void Stage::move() { // 화면 전환 관리
+	if (firstTransition) {
+		firstTransition += +10.0f; // 전환 속도
+	}
+	
+	if (secondTransition) {
+		secondTransition -= 10.0f; // 전환 속도
 	}
 }

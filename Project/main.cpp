@@ -50,6 +50,10 @@ void initialize() {
 		textures.push_back(image);
 	}
 
+	// MAIN
+	Stage main(0);
+	stages.push_back(main);
+
 	// STAGE 1
 	// Platform 생성
 	Stage stage1(1);
@@ -140,17 +144,20 @@ void idle() {
 		player.setVelocity(velocitydown);
 	}
 
-	if ((float)(end_t - start_t) > 1000 / 30.0f) {
+	if ((float)(end_t - start_t) > 1000 / 30.0f) { // 프레임 제어
 
 		// 플레이어와 버블 움직임을 업데이트 하는 부분
-
 		player.move();
 
 		for (int i = 0; i < bubbles.size(); ++i) {
 			bubbles[i].move();
 		}
 
-		start_t = end_t;
+		// 스테이지 전환
+		if (stages[state].getFirstTransition()) {
+			stages[state].move();
+		}
+		start_t = end_t; // 프레임 제어 끝
 	}
 
 	glutPostRedisplay();
@@ -180,15 +187,18 @@ void display() {
 		glPopMatrix();
 	}
 
-	//2D 요소들 draw
 
-	if (state == STAGE1) {
+	if (state != BEGIN) {
+		//2D 요소들 draw
+		glPushMatrix(); // 화면 전환 효과
+		if (stages[state].getFirstTransition()) glTranslatef(0, stages[state].getFirstTransition(), 0);
+		if (stages[state].getSecondTransition()) glTranslatef(0, stages[state].getSecondTransition(), 0); // 화면 전환 끝
+		stages[state].draw();
+		glPopMatrix();
 
-		stages[0].draw();
 		player.draw();
 
 		//3D 요소들 draw
-
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_LIGHTING);
 		glEnable(light.getID());
@@ -200,11 +210,9 @@ void display() {
 		light.draw();
 
 		//버블 draw
-
 		for (int i = 0; i < bubbles.size(); ++i) {
 			bubbles[i].draw();
 		}
-
 	}
 	
 
@@ -224,6 +232,7 @@ void keyboardDown(unsigned char key, int x, int y) {
 
 		if (state == BEGIN) {
 			state = STAGE1;
+			stages[state].startFirstTransition();
 		}
 
 		else if (state == STAGE1) {
