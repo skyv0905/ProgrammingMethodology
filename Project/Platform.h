@@ -10,17 +10,16 @@ public:
 	enum class PLATFORM {MIDDLE, GROUND};
 
 	Platform();
-	Platform(float x, float y, PLATFORM type);
+	Platform(float x, float y, PLATFORM type, GLuint ID);
 	
 	PLATFORM getPlatformType();
-	void setPlatform(float x, float y, PLATFORM type);
+	void setPlatform(float x, float y, PLATFORM type, GLuint ID);
 	void draw();
 
 private:
-	//Texture texture;
+	GLuint textureID; // ÅØ½ºÃÄ ID
 	float width;
-	float x;
-	float y;
+	Vector3f center;
 	PLATFORM Platformtype;
 };
 

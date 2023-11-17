@@ -24,7 +24,7 @@ GameState state;
 
 vector<Stage> stages;
 vector<Bubble> bubbles;
-Texture texture;
+vector<Texture> textures;
 
 bool bPressLeft;
 bool bPressRight;
@@ -35,10 +35,25 @@ Player player(-boundaryX + 56 + PLAYER_SIZE * 0.5f, -boundaryY + 25 + PLAYER_SIZ
 Light light(boundaryX, boundaryY, boundaryX / 2, GL_LIGHT0);
 
 void initialize() {
+	// 메인화면 이미지 로딩
+	Texture mainImage;
+	mainImage.initializeTexture("Bubble_Bobble_Cover.jpeg");
+	textures.push_back(mainImage);
 
+	// 플랫폼 이미지 로딩
+	auto num_img = 6; // 로딩 개수
+	string prefix_platform = "Platform_type";
+	for (auto i = 1; i <= num_img; i++) {
+		Texture image;
+		cout << (prefix_platform + to_string(i) + ".png").c_str();
+		image.initializeTexture((prefix_platform + to_string(i) + ".png").c_str());
+		textures.push_back(image);
+	}
+
+	// STAGE 1
 	// Platform 생성
-
 	Stage stage1(1);
+	stage1.setStagePlatformTextureID(textures[1].getTextureID(), textures[2].getTextureID(), textures[3].getTextureID());
 	vector<string> platformInfo;
 	platformInfo.push_back("■■■■■■■■■■■■■■■■■■■■■■■■■■■■");
 	platformInfo.push_back("■■                                                ■■");
@@ -74,8 +89,6 @@ void initialize() {
 	platformInfo.clear();
 
 	state = BEGIN;
-
-	texture.initializeTexture("Bubble_Bobble_Cover.jpeg");
 }
 
 
@@ -151,7 +164,7 @@ void display() {
 
 		glEnable(GL_TEXTURE_2D);
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-		glBindTexture(GL_TEXTURE_2D, texture.getTextureID());
+		glBindTexture(GL_TEXTURE_2D, textures[0].getTextureID());
 		glBegin(GL_QUADS);
 		glTexCoord2f(0.0f, 0.0f); glVertex2f(-350, -350);
 		glTexCoord2f(0.0f, 1.0f); glVertex2f(-350, 350);
