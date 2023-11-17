@@ -154,7 +154,7 @@ void idle() {
 		}
 
 		// 스테이지 전환
-		if (stages[state].getFirstTransition()) {
+		if (stages[state].getFirstTransition() || stages[state].getSecondTransition()) {
 			stages[state].move();
 		}
 		start_t = end_t; // 프레임 제어 끝
@@ -192,7 +192,7 @@ void display() {
 		//2D 요소들 draw
 		glPushMatrix(); // 화면 전환 효과
 		if (stages[state].getFirstTransition()) glTranslatef(0, stages[state].getFirstTransition(), 0);
-		if (stages[state].getSecondTransition()) glTranslatef(0, stages[state].getSecondTransition(), 0); // 화면 전환 끝
+		if (stages[state].getSecondTransition()) glTranslatef(0, stages[state].getSecondTransition() + WINDOW_HEIGHT, 0); // 화면 전환 끝
 		stages[state].draw();
 		glPopMatrix();
 

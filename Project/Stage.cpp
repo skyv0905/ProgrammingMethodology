@@ -41,11 +41,11 @@ float Stage::getSecondTransition() {
 }
 
 void Stage::startFirstTransition() {
-	firstTransition = -700.0f;
+	firstTransition = -WINDOW_HEIGHT;
 }
 
 void Stage::startSecondTransition() {
-	secondTransition = 700.0f;
+	secondTransition = -WINDOW_HEIGHT;
 }
 
 void Stage::draw() {
@@ -57,10 +57,14 @@ void Stage::draw() {
 
 void Stage::move() { // 화면 전환 관리
 	if (firstTransition) {
-		firstTransition += +10.0f; // 전환 속도
+		firstTransition += (WINDOW_HEIGHT / 50); // 전환 속도
 	}
 	
 	if (secondTransition) {
-		secondTransition -= 10.0f; // 전환 속도
+		secondTransition += (WINDOW_HEIGHT / 50); // 전환 속도
+	}
+
+	if (firstTransition > 0 || secondTransition > 0) { // 에러 방지
+		firstTransition = secondTransition = 0;
 	}
 }
