@@ -4,7 +4,7 @@
 
 class Bubble {
 public:
-	enum STATE { GROWING, UP };
+	enum STATE { GROWING, UP, STOP };
 
 	Bubble();
 	Bubble(float r, int sl, int st);
@@ -22,7 +22,9 @@ public:
 	
 	void setMTL(const Material& m);
 	void setState(STATE s);
+	STATE getState();
 
+	void handleCollision(Vector3f center, float x);
 	void move();
 	void draw() const;
 

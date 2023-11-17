@@ -59,7 +59,7 @@ void initialize() {
 	Stage stage1(1);
 	stage1.setStagePlatformTextureID(textures[1].getTextureID(), textures[2].getTextureID(), textures[3].getTextureID());
 	vector<string> platformInfo;
-	platformInfo.push_back("■■■■■■■■■■■■■■■■■■■■■■■■■■■■");
+	platformInfo.push_back("■■    ■■■■■■■■■■■■■■■■■■■■■■■■");
 	platformInfo.push_back("■■                                                ■■");
 	platformInfo.push_back("■■                                                ■■");
 	platformInfo.push_back("■■                                                ■■");
@@ -151,15 +151,46 @@ void idle() {
 
 		for (int i = 0; i < bubbles.size(); ++i) {
 			bubbles[i].move();
-			if (bubbles[i].getSize() >= 1.0f) {
-				bubbles[i].setState(Bubble::UP);
+		}
+
+		// 충돌 제어
+		int i = 0;
+		for (auto& platform : stages[state].getStagePlatform()) {
+			// 플랫폼 - 버블간 충돌
+			if (platform.getPlatformType() == Platform::PLATFORM::GROUND) {
+				for (auto& bubble : bubbles) {
+					if (bubble.getState() == Bubble::STOP) {
+						continue;
+					}
+
+					auto d = bubble.getRadius() + (platform.getWidth() / 2); // 접할 때 거리
+					auto center_b = bubble.getCenter();
+					auto center_p = platform.getCenter();
+					float dx = center_p[0] - center_b[0];
+					float dy = center_p[1] - center_b[1];
+					dx *= dx < 0 ? -1 : 1;
+					dy *= dy < 0 ? -1 : 1;
+
+					if (dx < d && dy < d) { // 충돌 발생
+						cout << i << "번째 플랫폼에 버블 충돌 발생" << endl;
+						bubble.handleCollision(center_p, platform.getWidth() / 2);
+					}
+				}
 			}
+			i += 1;
+			// 플랫폼 - 플레이어간 충돌
+			// todo
 		}
 
 		// 스테이지 전환
 		if (stages[state].getFirstTransition() || stages[state].getSecondTransition()) {
 			stages[state].move();
 		}
+
+		if (player.getBubbleCooldown() != 0.0f) { // 버블 재발사 대기시간 제어
+			player.mBubbleCooldown();
+		}
+
 		start_t = end_t; // 프레임 제어 끝
 	}
 
@@ -239,7 +270,9 @@ void keyboardDown(unsigned char key, int x, int y) {
 		}
 
 		else if (state == STAGE1) {
-			bubbles.push_back(player.shootBubble());
+			if (player.getBubbleCooldown() == 0.0f) {
+				bubbles.push_back(player.shootBubble());
+			}
 		}
 		
 	}

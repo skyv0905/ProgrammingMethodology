@@ -61,17 +61,44 @@ void Bubble::setMTL(const Material& m) {
 	mtl = m;
 }
 
-void Bubble::setState(STATE s) {
+void Bubble::setState(STATE s) { // GROWING 속도는 Player.cpp에서 init
 	bubbleState = s;
 	if (bubbleState == UP) {
 		size = 1.0f;
-		velocity.setPos(0.0f, 3.0f, 0.0f);
+		velocity.setPos(0.0f, 30.0f, 0.0f); // 상승 속도
+	}
+	else if (bubbleState == STOP) {
+		velocity.setPos(0.0f, 0.0f, 0.0f); // 정지 속도
+	}
+}
+
+Bubble::STATE Bubble::getState() {
+	return bubbleState;
+}
+
+void Bubble::handleCollision(Vector3f center, float x) {
+	switch (bubbleState) {
+	case GROWING: // 성장 상태에서 충돌 발생
+		this->center[0] = center[0] + (this->center[0] > center[0] ? (radius + x) : -(radius + x));
+		setState(UP);
+		break;
+	case UP: // 상승 상태에서 충돌 발생
+		this->center[1] = center[1] - radius - x;
+		setState(STOP);
+		break;
+	case STOP: // 정지 상태에서 충돌 발생
+		break;
 	}
 }
 
 void Bubble::move() {
+	if (bubbleState == STOP) return; // 정지 상태
+
 	if (bubbleState == GROWING) { // 커지는 중
 		size += 1.0f / 10;
+		if (size > 1.0f) {
+			setState(UP);
+		}
 	}
 	center = center + velocity;
 }

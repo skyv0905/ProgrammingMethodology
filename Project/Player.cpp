@@ -15,6 +15,7 @@ Player::Player(float x, float y, float z, float size) {
 	face = RIGHT;
 	horizontalState = STOPH;
 	verticalState = STOPV;
+	bubbleCooldown = 0;
 }
 
 //Player의 중심 위치를 Vector3f 클래스의 객체를 받아 설정
@@ -77,6 +78,8 @@ Bubble Player::shootBubble() {
 	m.setShininess(10.0f);
 
 	bub.setMTL(m);
+	
+	bubbleCooldown = 0.5f; // 버블 재발동 대기시간
 
 	return bub;
 }
@@ -86,6 +89,18 @@ bool Player::isMoving() const {
 
 	if (!velocity[0] && !velocity[1] && !velocity[2]) return false;
 	else return true;
+}
+
+void Player::mBubbleCooldown() {
+	bubbleCooldown -= 0.1f;
+	
+	if (bubbleCooldown < 0.0f) {
+		bubbleCooldown = 0.0f;
+	}
+}
+
+float Player::getBubbleCooldown() const {
+	return bubbleCooldown;
 }
 
 void Player::setAcceleration(Vector3f accel) {

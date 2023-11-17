@@ -13,6 +13,8 @@ public:
 	Platform(float x, float y, PLATFORM type, GLuint ID);
 	
 	PLATFORM getPlatformType();
+	float getWidth() const;
+	Vector3f getCenter() const;
 	void setPlatform(float x, float y, PLATFORM type, GLuint ID);
 	void draw();
 

@@ -30,6 +30,13 @@ Platform::PLATFORM Platform::getPlatformType() {
 	return Platformtype;
 }
 
+float Platform::getWidth() const {
+	return width;
+}
+
+Vector3f Platform::getCenter() const {
+	return center;
+}
 
 void Platform::draw() {
 	glEnable(GL_TEXTURE_2D); // 텍스쳐작업
