@@ -151,6 +151,9 @@ void idle() {
 
 		for (int i = 0; i < bubbles.size(); ++i) {
 			bubbles[i].move();
+			if (bubbles[i].getSize() >= 1.0f) {
+				bubbles[i].setState(Bubble::UP);
+			}
 		}
 
 		// 스테이지 전환

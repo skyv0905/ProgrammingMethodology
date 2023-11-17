@@ -5,7 +5,7 @@ extern std::vector<Stage>stages;
 
 Platform::Platform() {
 	width = PIXEL;
-	center[0] = center[1] = 0;
+	center[0] = center[1] = center[2] = 0;
 	Platformtype = PLATFORM::GROUND;
 }
 
@@ -13,6 +13,7 @@ Platform::Platform(float x, float y, PLATFORM type, GLuint ID) {
 	width = PIXEL;
 	center[0] = (x - 14) * PIXEL + (width / 2);
 	center[1] = (y - 14) * PIXEL + (width / 2);;
+	center[2] = 0;
 	this->Platformtype = type;
 	this->textureID = ID;
 }
@@ -20,6 +21,7 @@ Platform::Platform(float x, float y, PLATFORM type, GLuint ID) {
 void Platform::setPlatform(float x, float y, PLATFORM type, GLuint ID) {
 	center[0] = x;
 	center[1] = y;
+	center[2] = 0;
 	this->Platformtype = type;
 	this->textureID = ID;
 }

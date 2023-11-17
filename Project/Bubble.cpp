@@ -1,9 +1,15 @@
 #include "Bubble.h"
 #include <GL/freeglut.h>
 
-Bubble::Bubble() {}
+Bubble::Bubble() {
+	bubbleState = GROWING;
+	size = 1.0f / 10;
+}
 
-Bubble::Bubble(float r, int sl, int st) : radius(r), slice(sl), stack(st) {}
+Bubble::Bubble(float r, int sl, int st) : radius(r), slice(sl), stack(st) {
+	bubbleState = GROWING;
+	size = 1.0f / 10;
+}
 
 void Bubble::setRadius(float r) {
 
@@ -13,6 +19,11 @@ void Bubble::setRadius(float r) {
 float Bubble::getRadius() const {
 
 	return radius;
+}
+
+float Bubble::getSize() const {
+
+	return size;
 }
 
 void Bubble::setSlice(int sl) {
@@ -50,8 +61,18 @@ void Bubble::setMTL(const Material& m) {
 	mtl = m;
 }
 
-void Bubble::move() {
+void Bubble::setState(STATE s) {
+	bubbleState = s;
+	if (bubbleState == UP) {
+		size = 1.0f;
+		velocity.setPos(0.0f, 3.0f, 0.0f);
+	}
+}
 
+void Bubble::move() {
+	if (bubbleState == GROWING) { // 커지는 중
+		size += 1.0f / 10;
+	}
 	center = center + velocity;
 }
 
@@ -73,6 +94,7 @@ void Bubble::draw() const {
 
 	glPushMatrix();
 	glTranslatef(center[0], center[1], center[2]);
+	glScalef(size, size, size);
 	glutSolidSphere(radius, slice, stack);
 	glPopMatrix();
 }

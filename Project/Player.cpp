@@ -61,8 +61,8 @@ void Player::setVerticalState(VERTICAL_STATE hState) {
 //Player가 쏜 버블을 Bubble을 class로 한 객체로 생성하는 함수. 생성 위치는 플레이어의 위치. 크기느 player와 같게. 속도의 부호는 player의 방향에 따라서. MTL은 일정하게.
 Bubble Player::shootBubble() {
 
-	Vector3f velocityright(10, 0, 0);
-	Vector3f velocityleft(-10, 0, 0);
+	Vector3f velocityright(25, 0, 0); // 버블 속도
+	Vector3f velocityleft(-25, 0, 0);
 
 	Bubble bub(PLAYER_SIZE/2, 16, 16);
 	bub.setCenter(center);
