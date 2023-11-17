@@ -187,7 +187,7 @@ void idle() {
 			stages[state].move();
 		}
 
-		if (player.getBubbleCooldown() != 0.0f) { // 버블 재발사 대기시간 제어
+		if (!player.canShootBubble()) { // 버블 재발사 대기시간 제어
 			player.mBubbleCooldown();
 		}
 
@@ -270,7 +270,7 @@ void keyboardDown(unsigned char key, int x, int y) {
 		}
 
 		else if (state == STAGE1) {
-			if (player.getBubbleCooldown() == 0.0f) {
+			if (player.canShootBubble()) {
 				bubbles.push_back(player.shootBubble());
 			}
 		}

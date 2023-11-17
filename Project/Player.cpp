@@ -99,8 +99,8 @@ void Player::mBubbleCooldown() {
 	}
 }
 
-float Player::getBubbleCooldown() const {
-	return bubbleCooldown;
+bool Player::canShootBubble() const { // 버블 발사 가능할 시 true 리턴
+	return bubbleCooldown == 0.0f;
 }
 
 void Player::setAcceleration(Vector3f accel) {

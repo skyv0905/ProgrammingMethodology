@@ -25,7 +25,7 @@ public:
 	bool isMoving() const;
 
 	void mBubbleCooldown(); // 버블 재발사 대기시간 프레임당 0.1f씩 감소
-	float getBubbleCooldown() const;
+	bool canShootBubble() const;
 
 	void move();
 	void draw() const;
