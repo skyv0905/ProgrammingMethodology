@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "GL/freeglut.h"
 #include "Constants.h"
 #include "Vector3f.h"

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #define WINDOW_X 250
 #define WINDOW_Y 250

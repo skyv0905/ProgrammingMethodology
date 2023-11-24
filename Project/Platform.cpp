@@ -1,4 +1,4 @@
-#include "Platform.h"
+﻿#include "Platform.h"
 #include "Stage.h"
 
 extern std::vector<Stage>stages;

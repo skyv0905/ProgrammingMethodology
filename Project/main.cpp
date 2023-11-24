@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include "GL/freeglut.h"
 
 #include "Constants.h"
@@ -208,6 +208,7 @@ void initialize() {
 	platformInfo.push_back("■■                                                ■■");
 	platformInfo.push_back("■■                                                ■■");
 	platformInfo.push_back("■■■■■■■■■■■■■■■■■■■■■■■■■■■■");
+
 
 	stage1.setStagePlatform(platformInfo);
 	stages.push_back(stage1);

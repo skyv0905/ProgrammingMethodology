@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include "Stage.h"
 
 void Stage::setStagePlatformTextureID(GLuint a, GLuint b, GLuint c) {
@@ -30,6 +30,7 @@ void Stage::setStagePlatform(std::vector<std::string> info) {
 		}
 		x = 0.0f;
 		y += 1.0f;
+
 	}
 }
 std::vector<Platform> Stage::getStagePlatform() {

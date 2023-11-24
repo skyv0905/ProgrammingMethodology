@@ -1,4 +1,4 @@
-#include "light.h"
+﻿#include "light.h"
 #include <GL/freeglut.h>
 
 Light::Light(float x, float y, float z, int L_ID) {
