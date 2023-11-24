@@ -10,7 +10,7 @@ extern std::vector<Texture> textures;
 extern bool bPressLeft;
 extern bool bPressRight;
 
-//Player »ı¼ºÀÚ. ±âº»°ªÀ¸·Î´Â ¿ŞÂÊÀ» º¸°í ÀÖÀ¸¸ç, ¸ØÃß¾îÀÖ´Â »óÅÂ.
+//Player ìƒì„±ì. ê¸°ë³¸ê°’ìœ¼ë¡œëŠ” ì™¼ìª½ì„ ë³´ê³  ìˆìœ¼ë©°, ë©ˆì¶”ì–´ìˆëŠ” ìƒíƒœ.
 Player::Player(float x, float y, float z, float size) {
 
 	center[0] = x; center[1] = y; center[2] = z;
@@ -22,37 +22,37 @@ Player::Player(float x, float y, float z, float size) {
 	bubbleCooldown = 0;
 }
 
-//PlayerÀÇ Áß½É À§Ä¡¸¦ Vector3f Å¬·¡½ºÀÇ °´Ã¼¸¦ ¹Ş¾Æ ¼³Á¤
+//Playerì˜ ì¤‘ì‹¬ ìœ„ì¹˜ë¥¼ Vector3f í´ë˜ìŠ¤ì˜ ê°ì²´ë¥¼ ë°›ì•„ ì„¤ì •
 void Player::setCenter(const Vector3f& c) {
 
 	center = c;
 }
 
-//PlayerÀÇ Áß½É À§Ä¡¸¦ ¹İÈ¯ÇÏ´Â ÇÔ¼ö
+//Playerì˜ ì¤‘ì‹¬ ìœ„ì¹˜ë¥¼ ë°˜í™˜í•˜ëŠ” í•¨ìˆ˜
 Vector3f Player::getCenter() const {
 
 	return center;
 }
 
-//PlayerÀÇ ¼Óµµ¸¦ Vector3f Å¬·¡½ºÀÇ °´Ã¼¸¦ ¹Ş¾Æ ¼³Á¤ÇÏ´Â ÇÔ¼ö
+//Playerì˜ ì†ë„ë¥¼ Vector3f í´ë˜ìŠ¤ì˜ ê°ì²´ë¥¼ ë°›ì•„ ì„¤ì •í•˜ëŠ” í•¨ìˆ˜
 void Player::setVelocity(const Vector3f& v) {
 
 	velocity = v;
 }
 
-//PlayerÀÇ ¼Óµµ¸¦ ¹İÈ¯ÇÏ´Â ÇÔ¼ö
+//Playerì˜ ì†ë„ë¥¼ ë°˜í™˜í•˜ëŠ” í•¨ìˆ˜
 Vector3f Player::getVelocity() const {
 
 	return velocity;
 }
 
-//Player°¡ ¹Ù¶óº¸´Â ¹æÇâÀ» enum FACE¸¦ typeÀ¸·Î ÇÑ °ªÀ¸·Î ¼³Á¤ÇÏ´Â ÇÔ¼ö
+//Playerê°€ ë°”ë¼ë³´ëŠ” ë°©í–¥ì„ enum FACEë¥¼ typeìœ¼ë¡œ í•œ ê°’ìœ¼ë¡œ ì„¤ì •í•˜ëŠ” í•¨ìˆ˜
 void Player::setFace(FACE f) {
 
 	face = f;
 }
 
-//Player°¡ ¼öÆòÀ¸·Î ¿òÁ÷ÀÏ ¶§, ¸ØÃß¾î ÀÖ´ÂÁö ¿òÁ÷ÀÌ´ÂÁö¸¦ ¼³Á¤ÇÏ´Â ÇÔ¼ö
+//Playerê°€ ìˆ˜í‰ìœ¼ë¡œ ì›€ì§ì¼ ë•Œ, ë©ˆì¶”ì–´ ìˆëŠ”ì§€ ì›€ì§ì´ëŠ”ì§€ë¥¼ ì„¤ì •í•˜ëŠ” í•¨ìˆ˜
 void Player::setHorizontalState(HORIZONTAL_STATE hState) {
 
 	horizontalState = hState;
@@ -63,10 +63,10 @@ void Player::setVerticalState(VERTICAL_STATE hState) {
 	verticalState = hState;
 }
 
-//Player°¡ ½ğ ¹öºíÀ» BubbleÀ» class·Î ÇÑ °´Ã¼·Î »ı¼ºÇÏ´Â ÇÔ¼ö. »ı¼º À§Ä¡´Â ÇÃ·¹ÀÌ¾îÀÇ À§Ä¡. Å©±â´À player¿Í °°°Ô. ¼ÓµµÀÇ ºÎÈ£´Â playerÀÇ ¹æÇâ¿¡ µû¶ó¼­. MTLÀº ÀÏÁ¤ÇÏ°Ô.
+//Playerê°€ ìœ ë²„ë¸”ì„ Bubbleì„ classë¡œ í•œ ê°ì²´ë¡œ ìƒì„±í•˜ëŠ” í•¨ìˆ˜. ìƒì„± ìœ„ì¹˜ëŠ” í”Œë ˆì´ì–´ì˜ ìœ„ì¹˜. í¬ê¸°ëŠ playerì™€ ê°™ê²Œ. ì†ë„ì˜ ë¶€í˜¸ëŠ” playerì˜ ë°©í–¥ì— ë”°ë¼ì„œ. MTLì€ ì¼ì •í•˜ê²Œ.
 Bubble Player::shootBubble() {
 
-	Vector3f velocityright(25, 0, 0); // ¹öºí ¼Óµµ
+	Vector3f velocityright(25, 0, 0); // ë²„ë¸” ì†ë„
 	Vector3f velocityleft(-25, 0, 0);
 
 	Bubble bub(PLAYER_SIZE/2, 16, 16);
@@ -83,12 +83,12 @@ Bubble Player::shootBubble() {
 
 	bub.setMTL(m);
 	
-	bubbleCooldown = 0.5f; // ¹öºí Àç¹ßµ¿ ´ë±â½Ã°£
+	bubbleCooldown = 0.5f; // ë²„ë¸” ì¬ë°œë™ ëŒ€ê¸°ì‹œê°„
 
 	return bub;
 }
 
-//Player°¡ ¿òÁ÷ÀÌ°í ÀÖÀ¸¸é true, ¾Æ´Ï¸é false¸¦ ¹İÈ¯ÇÏ´Â ÇÔ¼ö
+//Playerê°€ ì›€ì§ì´ê³  ìˆìœ¼ë©´ true, ì•„ë‹ˆë©´ falseë¥¼ ë°˜í™˜í•˜ëŠ” í•¨ìˆ˜
 bool Player::isMoving() const {
 
 	if (!velocity[0] && !velocity[1] && !velocity[2]) return false;
@@ -103,7 +103,7 @@ void Player::mBubbleCooldown() {
 	}
 }
 
-bool Player::canShootBubble() const { // ¹öºí ¹ß»ç °¡´ÉÇÒ ½Ã true ¸®ÅÏ
+bool Player::canShootBubble() const { // ë²„ë¸” ë°œì‚¬ ê°€ëŠ¥í•  ì‹œ true ë¦¬í„´
 	return bubbleCooldown == 0.0f;
 }
 
@@ -122,7 +122,7 @@ bool Player::isFalling() const {
 	return (verticalState == FALL);
 }
 
-//¼Óµµ¿¡ µû¶ó PlayerÀÇ À§Ä¡¸¦ updateÇÏ´Â ÇÔ¼ö. º»¹®ÀÇ idle function¿¡ »ğÀÔ.
+//ì†ë„ì— ë”°ë¼ Playerì˜ ìœ„ì¹˜ë¥¼ updateí•˜ëŠ” í•¨ìˆ˜. ë³¸ë¬¸ì˜ idle functionì— ì‚½ì….
 
 void Player::move() {
 
@@ -175,11 +175,11 @@ void Player::move() {
 	}
 }
 
-//Player¸¦ ±×¸®´Â ÇÔ¼ö. ¿ŞÂÊÀ» ¹Ù¶óº¼ ¶§¿Í ¿À¸¥ÂÊÀ» ¹Ù¶óº¼ ¶§ ¼­·Î ´Ù¸¥ ÀÌ¹ÌÁö·Î mappingÇØ¾ß ÇÔ.
+//Playerë¥¼ ê·¸ë¦¬ëŠ” í•¨ìˆ˜. ì™¼ìª½ì„ ë°”ë¼ë³¼ ë•Œì™€ ì˜¤ë¥¸ìª½ì„ ë°”ë¼ë³¼ ë•Œ ì„œë¡œ ë‹¤ë¥¸ ì´ë¯¸ì§€ë¡œ mappingí•´ì•¼ í•¨.
 
 void Player::draw() const {
 
-	glEnable(GL_TEXTURE_2D); // ÅØ½ºÃÄÀÛ¾÷
+	glEnable(GL_TEXTURE_2D); // í…ìŠ¤ì³ì‘ì—…
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 	glBindTexture(GL_TEXTURE_2D, textures[7].getTextureID());
 

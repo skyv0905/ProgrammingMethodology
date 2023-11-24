@@ -19,7 +19,7 @@ public:
 	void draw();
 
 private:
-	GLuint textureID; // ÅØ½ºÃÄ ID
+	GLuint textureID; // í…ìŠ¤ì³ ID
 	float width;
 	Vector3f center;
 	PLATFORM Platformtype;

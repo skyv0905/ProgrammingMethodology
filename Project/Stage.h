@@ -17,11 +17,11 @@ public:
 		secondTransition = 0;
 	};
 
-	void setStagePlatformTextureID(GLuint a, GLuint b, GLuint c); // ÇÃ·§Æû¿¡ ³ÖÀ» ÅØ½ºÃÄÀÇ ID ¼³Á¤
+	void setStagePlatformTextureID(GLuint a, GLuint b, GLuint c); // í”Œë«í¼ì— ë„£ì„ í…ìŠ¤ì³ì˜ ID ì„¤ì •
 	void setStagePlatform(std::vector<std::string> info);
 	std::vector<Platform> getStagePlatform();
 
-	float getFirstTransition(); // È­¸é ÀüÈ¯ °ü¸®
+	float getFirstTransition(); // í™”ë©´ ì „í™˜ ê´€ë¦¬
 	float getSecondTransition();
 	void startFirstTransition();
 	void startSecondTransition();
@@ -31,12 +31,12 @@ public:
 
 private:
 	int stageID;
-	GLuint platform_texture_type1; // ÇÃ·§Æû¿¡ ³ÖÀ» ÅØ½ºÃÄÀÇ ID
-	GLuint platform_texture_type2; // ÃÖ´ë 3°³
-	GLuint platform_texture_type3; // type1 : ¡á¿¡ »ç¿ë / type2 : ¢Ã¿¡ »ç¿ë / type3 : ¹ÌÁ¤
+	GLuint platform_texture_type1; // í”Œë«í¼ì— ë„£ì„ í…ìŠ¤ì³ì˜ ID
+	GLuint platform_texture_type2; // ìµœëŒ€ 3ê°œ
+	GLuint platform_texture_type3; // type1 : â– ì— ì‚¬ìš© / type2 : â–£ì— ì‚¬ìš© / type3 : ë¯¸ì •
 	std::vector<Platform> platforms;
 
-	float firstTransition; // È­¸é ÀüÈ¯ °ü¸®
+	float firstTransition; // í™”ë©´ ì „í™˜ ê´€ë¦¬
 	float secondTransition;
 };
 

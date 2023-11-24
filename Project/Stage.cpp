@@ -14,7 +14,7 @@ void Stage::setStagePlatform(std::vector<std::string> info) {
 
 			if ((j % 2) != 0) continue;
 
-			if (info[i].substr(j, 2) == "°·") {
+			if (info[i].substr(j, 2) == "‚ñ†") {
 
 				if (j == 2) { Platform p(x, y, Platform::PLATFORM::LEFT, platform_texture_type1); platforms.push_back(p); }
 				else if (j == info[i].size() - 4) { Platform p(x, y, Platform::PLATFORM::RIGHT, platform_texture_type1); platforms.push_back(p); }
@@ -22,7 +22,7 @@ void Stage::setStagePlatform(std::vector<std::string> info) {
 				else { Platform p(x, y, Platform::PLATFORM::NONE, platform_texture_type1); platforms.push_back(p); }
 			}
 
-			else if (info[i].substr(j, 2) == "¢√") {
+			else if (info[i].substr(j, 2) == "‚ñ£") {
 				Platform p(x, y, Platform::PLATFORM::MIDDLE, platform_texture_type2);
 				platforms.push_back(p);
 			}
@@ -37,7 +37,7 @@ std::vector<Platform> Stage::getStagePlatform() {
 	return platforms;
 }
 
-float Stage::getFirstTransition() { // »≠∏È ¿¸»Ø ∞¸∏Æ
+float Stage::getFirstTransition() { // ÌôîÎ©¥ Ï†ÑÌôò Í¥ÄÎ¶¨
 	return firstTransition;
 }
 
@@ -60,17 +60,17 @@ void Stage::draw() {
 	}
 }
 
-void Stage::move() { // »≠∏È ¿¸»Ø ∞¸∏Æ
+void Stage::move() { // ÌôîÎ©¥ Ï†ÑÌôò Í¥ÄÎ¶¨
 
 	if (firstTransition) {
-		firstTransition += (WINDOW_HEIGHT / 50); // ¿¸»Ø º”µµ
+		firstTransition += (WINDOW_HEIGHT / 50); // Ï†ÑÌôò ÏÜçÎèÑ
 	}
 	
 	if (secondTransition) {
-		secondTransition += (WINDOW_HEIGHT / 50); // ¿¸»Ø º”µµ
+		secondTransition += (WINDOW_HEIGHT / 50); // Ï†ÑÌôò ÏÜçÎèÑ
 	}
 
-	if (firstTransition > 0 || secondTransition > 0) { // ø°∑Ø πÊ¡ˆ
+	if (firstTransition > 0 || secondTransition > 0) { // ÏóêÎü¨ Î∞©ÏßÄ
 		firstTransition = secondTransition = 0;
 	}
 }

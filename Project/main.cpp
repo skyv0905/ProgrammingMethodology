@@ -36,7 +36,7 @@ bool PlayerIsOnPlatform;
 Player player(0, 0, 0.0f, PLAYER_SIZE);
 Light light(boundaryX, boundaryY, boundaryX / 2, GL_LIGHT0);
 
-// Stage¿Í Player°£ÀÇ collision detecting
+// Stageì™€ Playerê°„ì˜ collision detecting
 
 bool isCollisionDetectedLeft(const Player& player, Platform& platform) {
 
@@ -109,7 +109,7 @@ bool isCollisionDetectedMiddle(const Player& player, Platform& platform) {
 		return false;
 }
 
-// Stage¿Í Player°£ÀÇ collision handling
+// Stageì™€ Playerê°„ì˜ collision handling
 
 void handleCollision(Player& player, Platform& platform) {
 
@@ -151,13 +151,13 @@ void handleCollision(Player& player, Platform& platform) {
 
 void initialize() {
 
-	// ¸ŞÀÎÈ­¸é ÀÌ¹ÌÁö ·Îµù
+	// ë©”ì¸í™”ë©´ ì´ë¯¸ì§€ ë¡œë”©
 	Texture mainImage;
 	mainImage.initializeTexture("Bubble_Bobble_Cover.jpeg");
 	textures.push_back(mainImage);
 
-	// ÇÃ·§Æû ÀÌ¹ÌÁö ·Îµù
-	auto num_img = 6; // ·Îµù °³¼ö
+	// í”Œë«í¼ ì´ë¯¸ì§€ ë¡œë”©
+	auto num_img = 6; // ë¡œë”© ê°œìˆ˜
 	string prefix_platform = "Platform_type";
 	for (auto i = 1; i <= num_img; i++) {
 		Texture image;
@@ -166,7 +166,7 @@ void initialize() {
 		textures.push_back(image);
 	}
 
-	// ÇÃ·¹ÀÌ¾î ÀÌ¹ÌÁö ·Îµù
+	// í”Œë ˆì´ì–´ ì´ë¯¸ì§€ ë¡œë”©
 	Texture playerimage;
 	playerimage.initializeTexture("Player.png");
 	textures.push_back(playerimage);
@@ -176,38 +176,38 @@ void initialize() {
 	stages.push_back(main);
 
 	// STAGE 1
-	// Platform »ı¼º
+	// Platform ìƒì„±
 	Stage stage1(1);
 	stage1.setStagePlatformTextureID(textures[1].getTextureID(), textures[2].getTextureID(), textures[3].getTextureID());
 	vector<string> platformInfo;
-	platformInfo.push_back("¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á");
-	platformInfo.push_back("¡á¡á                                                ¡á¡á");
-	platformInfo.push_back("¡á¡á                                                ¡á¡á");
-	platformInfo.push_back("¡á¡á                                                ¡á¡á");
-	platformInfo.push_back("¡á¡á                                                ¡á¡á");
-	platformInfo.push_back("¡á¡á                                                ¡á¡á");
-	platformInfo.push_back("¡á¡á                                                ¡á¡á");
-	platformInfo.push_back("¡á¡á                                                ¡á¡á");
-	platformInfo.push_back("¡á¡á                                                ¡á¡á");
-	platformInfo.push_back("¡á¡á                                                ¡á¡á");
-	platformInfo.push_back("¡á¡á                                                ¡á¡á");
-	platformInfo.push_back("¡á¡á                                                ¡á¡á");
-	platformInfo.push_back("¡á¡á¢Ã¢Ã      ¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã      ¢Ã¢Ã¡á¡á");
-	platformInfo.push_back("¡á¡á                                                ¡á¡á");
-	platformInfo.push_back("¡á¡á                                                ¡á¡á");
-	platformInfo.push_back("¡á¡á                                                ¡á¡á");
-	platformInfo.push_back("¡á¡á                                                ¡á¡á");
-	platformInfo.push_back("¡á¡á¢Ã¢Ã      ¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã      ¢Ã¢Ã¡á¡á");
-	platformInfo.push_back("¡á¡á                                                ¡á¡á");
-	platformInfo.push_back("¡á¡á                                                ¡á¡á");
-	platformInfo.push_back("¡á¡á                                                ¡á¡á");
-	platformInfo.push_back("¡á¡á                                                ¡á¡á");
-	platformInfo.push_back("¡á¡á¢Ã¢Ã      ¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã¢Ã      ¢Ã¢Ã¡á¡á");
-	platformInfo.push_back("¡á¡á                                                ¡á¡á");
-	platformInfo.push_back("¡á¡á                                                ¡á¡á");
-	platformInfo.push_back("¡á¡á                                                ¡á¡á");
-	platformInfo.push_back("¡á¡á                                                ¡á¡á");
-	platformInfo.push_back("¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á");
+	platformInfo.push_back("â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– ");
+	platformInfo.push_back("â– â–                                                 â– â– ");
+	platformInfo.push_back("â– â–                                                 â– â– ");
+	platformInfo.push_back("â– â–                                                 â– â– ");
+	platformInfo.push_back("â– â–                                                 â– â– ");
+	platformInfo.push_back("â– â–                                                 â– â– ");
+	platformInfo.push_back("â– â–                                                 â– â– ");
+	platformInfo.push_back("â– â–                                                 â– â– ");
+	platformInfo.push_back("â– â–                                                 â– â– ");
+	platformInfo.push_back("â– â–                                                 â– â– ");
+	platformInfo.push_back("â– â–                                                 â– â– ");
+	platformInfo.push_back("â– â–                                                 â– â– ");
+	platformInfo.push_back("â– â– â–£â–£      â–£â–£â–£â–£â–£â–£â–£â–£â–£â–£â–£â–£â–£â–£      â–£â–£â– â– ");
+	platformInfo.push_back("â– â–                                                 â– â– ");
+	platformInfo.push_back("â– â–                                                 â– â– ");
+	platformInfo.push_back("â– â–                                                 â– â– ");
+	platformInfo.push_back("â– â–                                                 â– â– ");
+	platformInfo.push_back("â– â– â–£â–£      â–£â–£â–£â–£â–£â–£â–£â–£â–£â–£â–£â–£â–£â–£      â–£â–£â– â– ");
+	platformInfo.push_back("â– â–                                                 â– â– ");
+	platformInfo.push_back("â– â–                                                 â– â– ");
+	platformInfo.push_back("â– â–                                                 â– â– ");
+	platformInfo.push_back("â– â–                                                 â– â– ");
+	platformInfo.push_back("â– â– â–£â–£      â–£â–£â–£â–£â–£â–£â–£â–£â–£â–£â–£â–£â–£â–£      â–£â–£â– â– ");
+	platformInfo.push_back("â– â–                                                 â– â– ");
+	platformInfo.push_back("â– â–                                                 â– â– ");
+	platformInfo.push_back("â– â–                                                 â– â– ");
+	platformInfo.push_back("â– â–                                                 â– â– ");
+	platformInfo.push_back("â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– ");
 
 	stage1.setStagePlatform(platformInfo);
 	stages.push_back(stage1);
@@ -215,7 +215,7 @@ void initialize() {
 
 	state = BEGIN;
 
-	//PlayerÀÇ ÃÊ±â State setting
+	//Playerì˜ ì´ˆê¸° State setting
 	player.setVerticalState(Player::VERTICAL_STATE::FALL);
 	player.setHorizontalState(Player::HORIZONTAL_STATE::MOVE);
 }
@@ -224,9 +224,9 @@ void idle() {
 
 	end_t = clock();
 
-	if ((float)(end_t - start_t) > 1000 / 30.0f) { // ÇÁ·¹ÀÓ Á¦¾î
+	if ((float)(end_t - start_t) > 1000 / 30.0f) { // í”„ë ˆì„ ì œì–´
 
-		// ÇÃ·¹ÀÌ¾î¿Í ¹öºí ¿òÁ÷ÀÓÀ» ¾÷µ¥ÀÌÆ® ÇÏ´Â ºÎºĞ
+		// í”Œë ˆì´ì–´ì™€ ë²„ë¸” ì›€ì§ì„ì„ ì—…ë°ì´íŠ¸ í•˜ëŠ” ë¶€ë¶„
 
 		player.move();
 
@@ -272,17 +272,17 @@ void idle() {
 			player.setVerticalState(player.VERTICAL_STATE::FALL);
 		}
 
-		// Ãæµ¹ Á¦¾î
+		// ì¶©ëŒ ì œì–´
 		int i = 0;
 		for (auto& platform : stages[1].getStagePlatform()) {
-			// ÇÃ·§Æû - ¹öºí°£ Ãæµ¹
+			// í”Œë«í¼ - ë²„ë¸”ê°„ ì¶©ëŒ
 			if (platform.getPlatformType() != Platform::PLATFORM::MIDDLE) {
 				for (auto& bubble : bubbles) {
 					if (bubble.getState() == Bubble::STOP) {
 						continue;
 					}
 
-					auto d = bubble.getRadius() + (platform.getWidth() / 2); // Á¢ÇÒ ¶§ °Å¸®
+					auto d = bubble.getRadius() + (platform.getWidth() / 2); // ì ‘í•  ë•Œ ê±°ë¦¬
 					auto center_b = bubble.getCenter();
 					auto center_p = platform.getCenter();
 					float dx = center_p[0] - center_b[0];
@@ -290,18 +290,18 @@ void idle() {
 					dx *= dx < 0 ? -1 : 1;
 					dy *= dy < 0 ? -1 : 1;
 
-					if (dx < d && dy < d) { // Ãæµ¹ ¹ß»ı
-						cout << i << "¹øÂ° ÇÃ·§Æû¿¡ ¹öºí Ãæµ¹ ¹ß»ı" << endl;
+					if (dx < d && dy < d) { // ì¶©ëŒ ë°œìƒ
+						cout << i << "ë²ˆì§¸ í”Œë«í¼ì— ë²„ë¸” ì¶©ëŒ ë°œìƒ" << endl;
 						bubble.handleCollision(center_p, platform.getWidth() / 2);
 					}
 				}
 			}
 			i += 1;
-			// ÇÃ·§Æû - ÇÃ·¹ÀÌ¾î°£ Ãæµ¹
+			// í”Œë«í¼ - í”Œë ˆì´ì–´ê°„ ì¶©ëŒ
 			// todo
 		}
 
-		// ½ºÅ×ÀÌÁö ÀüÈ¯
+		// ìŠ¤í…Œì´ì§€ ì „í™˜
 		if (state == STAGE1TRANSITION) {
 
 			if (stages[1].getFirstTransition()) {
@@ -310,11 +310,11 @@ void idle() {
 		}
 		
 
-		if (!player.canShootBubble()) { // ¹öºí Àç¹ß»ç ´ë±â½Ã°£ Á¦¾î
+		if (!player.canShootBubble()) { // ë²„ë¸” ì¬ë°œì‚¬ ëŒ€ê¸°ì‹œê°„ ì œì–´
 			player.mBubbleCooldown();
 		}
 
-		start_t = end_t; // ÇÁ·¹ÀÓ Á¦¾î ³¡
+		start_t = end_t; // í”„ë ˆì„ ì œì–´ ë
 	}
 
 	glutPostRedisplay();
@@ -348,7 +348,7 @@ void display() {
 
 		bPressLeft = true;
 
-		glPushMatrix(); // È­¸é ÀüÈ¯ È¿°ú
+		glPushMatrix(); // í™”ë©´ ì „í™˜ íš¨ê³¼
 		if (stages[1].getFirstTransition()) glTranslatef(0, stages[1].getFirstTransition(), 0);
 		stages[1].draw();
 
@@ -365,14 +365,14 @@ void display() {
 	}
 
 	else if (state == STAGE1) {
-		//2D ¿ä¼Òµé draw
+		//2D ìš”ì†Œë“¤ draw
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		stages[1].draw();
 		player.draw();
 
-		//3D ¿ä¼Òµé draw
+		//3D ìš”ì†Œë“¤ draw
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_LIGHTING);
 		glEnable(light.getID());
@@ -383,7 +383,7 @@ void display() {
 
 		light.draw();
 
-		//¹öºí draw
+		//ë²„ë¸” draw
 		for (int i = 0; i < bubbles.size(); ++i) {
 			bubbles[i].draw();
 		}
@@ -401,7 +401,7 @@ void display() {
 
 void keyboardDown(unsigned char key, int x, int y) {
 
-	// Space ´©¸£¸é Player°¡ bubble »ı¼ºÇÏ¿© bubbles vector¿¡ ³Ö±â
+	// Space ëˆ„ë¥´ë©´ Playerê°€ bubble ìƒì„±í•˜ì—¬ bubbles vectorì— ë„£ê¸°
 
 	if (key == 32) {
 
@@ -420,7 +420,7 @@ void keyboardDown(unsigned char key, int x, int y) {
 
 void specialKeyDown(int key, int x, int y) {
 
-	// ¹æÇâÅ° ´­¸± ¶§ Player°¡ ¿òÁ÷ÀÌ´Â »óÅÂ·Î ÁöÁ¤ÇÏ¿© ¼Óµµ¸¸Å­ À§Ä¡¸¦ ¾÷µ¥ÀÌÆ®ÇÒ ¼ö ÀÖµµ·Ï (¾÷µ¥ÀÌÆ® ¿©ºÎ´Â PlayerÀÇ move ÇÔ¼ö¿¡ ±¸¹® ÀÖÀ½)
+	// ë°©í–¥í‚¤ ëˆŒë¦´ ë•Œ Playerê°€ ì›€ì§ì´ëŠ” ìƒíƒœë¡œ ì§€ì •í•˜ì—¬ ì†ë„ë§Œí¼ ìœ„ì¹˜ë¥¼ ì—…ë°ì´íŠ¸í•  ìˆ˜ ìˆë„ë¡ (ì—…ë°ì´íŠ¸ ì—¬ë¶€ëŠ” Playerì˜ move í•¨ìˆ˜ì— êµ¬ë¬¸ ìˆìŒ)
 
 	if (key == GLUT_KEY_LEFT) {
 
@@ -445,7 +445,7 @@ void specialKeyDown(int key, int x, int y) {
 
 void specialKeyUp(int key, int x, int y) {
 
-	// ¹æÇâÅ° ¶³¾îÁú ¶§ Player°¡ ¸ØÃß´Â »óÅÂ·Î ÁöÁ¤ÇÏ¿© À§Ä¡¸¦ ¾÷µ¥ÀÌÆ® ÇÏÁö ¾Êµµ·Ï (¾÷µ¥ÀÌÆ® ¿©ºÎ´Â PlayerÀÇ move ÇÔ¼ö¿¡ ±¸¹® ÀÖÀ½)
+	// ë°©í–¥í‚¤ ë–¨ì–´ì§ˆ ë•Œ Playerê°€ ë©ˆì¶”ëŠ” ìƒíƒœë¡œ ì§€ì •í•˜ì—¬ ìœ„ì¹˜ë¥¼ ì—…ë°ì´íŠ¸ í•˜ì§€ ì•Šë„ë¡ (ì—…ë°ì´íŠ¸ ì—¬ë¶€ëŠ” Playerì˜ move í•¨ìˆ˜ì— êµ¬ë¬¸ ìˆìŒ)
 
 	switch (key) {
 

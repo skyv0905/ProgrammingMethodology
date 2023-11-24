@@ -61,14 +61,14 @@ void Bubble::setMTL(const Material& m) {
 	mtl = m;
 }
 
-void Bubble::setState(STATE s) { // GROWING ¼Óµµ´Â Player.cpp¿¡¼­ init
+void Bubble::setState(STATE s) { // GROWING ì†ë„ëŠ” Player.cppì—ì„œ init
 	bubbleState = s;
 	if (bubbleState == UP) {
 		size = 1.0f;
-		velocity.setPos(0.0f, 30.0f, 0.0f); // »ó½Â ¼Óµµ
+		velocity.setPos(0.0f, 30.0f, 0.0f); // ìƒìŠ¹ ì†ë„
 	}
 	else if (bubbleState == STOP) {
-		velocity.setPos(0.0f, 0.0f, 0.0f); // Á¤Áö ¼Óµµ
+		velocity.setPos(0.0f, 0.0f, 0.0f); // ì •ì§€ ì†ë„
 	}
 }
 
@@ -78,23 +78,23 @@ Bubble::STATE Bubble::getState() {
 
 void Bubble::handleCollision(Vector3f center, float x) {
 	switch (bubbleState) {
-	case GROWING: // ¼ºÀå »óÅÂ¿¡¼­ Ãæµ¹ ¹ß»ý
+	case GROWING: // ì„±ìž¥ ìƒíƒœì—ì„œ ì¶©ëŒ ë°œìƒ
 		this->center[0] = center[0] + (this->center[0] > center[0] ? (radius + x) : -(radius + x));
 		setState(UP);
 		break;
-	case UP: // »ó½Â »óÅÂ¿¡¼­ Ãæµ¹ ¹ß»ý
+	case UP: // ìƒìŠ¹ ìƒíƒœì—ì„œ ì¶©ëŒ ë°œìƒ
 		this->center[1] = center[1] - radius - x;
 		setState(STOP);
 		break;
-	case STOP: // Á¤Áö »óÅÂ¿¡¼­ Ãæµ¹ ¹ß»ý
+	case STOP: // ì •ì§€ ìƒíƒœì—ì„œ ì¶©ëŒ ë°œìƒ
 		break;
 	}
 }
 
 void Bubble::move() {
-	if (bubbleState == STOP) return; // Á¤Áö »óÅÂ
+	if (bubbleState == STOP) return; // ì •ì§€ ìƒíƒœ
 
-	if (bubbleState == GROWING) { // Ä¿Áö´Â Áß
+	if (bubbleState == GROWING) { // ì»¤ì§€ëŠ” ì¤‘
 		size += 1.0f / 10;
 		if (size > 1.0f) {
 			setState(UP);

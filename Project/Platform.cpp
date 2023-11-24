@@ -45,7 +45,7 @@ Vector3f Platform::getCenter() const {
 
 void Platform::draw() {
 
-	glEnable(GL_TEXTURE_2D); // ÅØ½ºÃÄÀÛ¾÷
+	glEnable(GL_TEXTURE_2D); // í…ìŠ¤ì³ì‘ì—…
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 	glBindTexture(GL_TEXTURE_2D, textureID);
 	glBegin(GL_QUADS);

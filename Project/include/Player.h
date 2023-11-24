@@ -23,11 +23,11 @@ public:
 	Bubble shootBubble();
 
 	bool isMoving() const;
-	bool isJumping() const; // Jump ÈÄ ¼Óµµ°¡ 0 ÀÌÇÏ·Î °¨¼Ò ½Ã Fall·Î state ÀüÈ¯ À§ÇÑ ÇÔ¼ö
+	bool isJumping() const; // Jump í›„ ì†ë„ê°€ 0 ì´í•˜ë¡œ ê°ì†Œ ì‹œ Fallë¡œ state ì „í™˜ ìœ„í•œ í•¨ìˆ˜
 	bool isFalling() const;
 
 
-	void mBubbleCooldown(); // ¹öºí Àç¹ß»ç ´ë±â½Ã°£ ÇÁ·¹ÀÓ´ç 0.1f¾¿ °¨¼Ò
+	void mBubbleCooldown(); // ë²„ë¸” ì¬ë°œì‚¬ ëŒ€ê¸°ì‹œê°„ í”„ë ˆì„ë‹¹ 0.1fì”© ê°ì†Œ
 	bool canShootBubble() const;
 
 	void move();
