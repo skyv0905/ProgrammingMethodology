@@ -417,12 +417,28 @@ void keyboardDown(unsigned char key, int x, int y) {
 			}
 		}
 	}
+
+	/* 이 아래는 디버깅을 위한 코드입니다 */
+	switch (key)
+	{
+	case 'v':
+		{
+			Vector3f v = player.getVelocity();
+			cout << "현재 플레이어의 속도: " << v[0] << ", " << v[1] << ", " << v[2] << endl;
+			break;
+		}
+	case 'c':
+		{
+			Vector3f c = player.getCenter();
+			cout << "현재 플레이어의 중심: " << c[0] << ", " << c[1] << ", " << c[2] << endl;
+			break;
+		}
+	}
 }
 
 void specialKeyDown(int key, int x, int y) {
 
 	// 방향키 눌릴 때 Player가 움직이는 상태로 지정하여 속도만큼 위치를 업데이트할 수 있도록 (업데이트 여부는 Player의 move 함수에 구문 있음)
-
 	if (key == GLUT_KEY_LEFT) {
 
 		bPressLeft = true;
