@@ -6,8 +6,8 @@ class Player
 {
 public:
 	enum FACE { LEFT, RIGHT };
-	enum  HORIZONTAL_STATE { STOPH , MOVE };
-	enum  VERTICAL_STATE { STOPV, JUMP, FALL };
+	enum HORIZONTAL_STATE { STOPH , MOVE };
+	enum VERTICAL_STATE { STOPV, JUMP, FALL };
 
 	Player(float x, float y, float z, float size);
 
@@ -23,6 +23,9 @@ public:
 	Bubble shootBubble();
 
 	bool isMoving() const;
+	bool isJumping() const; // Jump 후 속도가 0 이하로 감소 시 Fall로 state 전환 위한 함수
+	bool isFalling() const;
+
 
 	void mBubbleCooldown(); // 버블 재발사 대기시간 프레임당 0.1f씩 감소
 	bool canShootBubble() const;

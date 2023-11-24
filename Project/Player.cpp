@@ -1,10 +1,14 @@
 #include "Player.h"
 #include "Constants.h"
 #include <GL/freeglut.h>
+#include "Texture.h"
 
 #include <vector>
 
 extern std::vector<Bubble>bubbles;
+extern std::vector<Texture> textures;
+extern bool bPressLeft;
+extern bool bPressRight;
 
 //Player 생성자. 기본값으로는 왼쪽을 보고 있으며, 멈추어있는 상태.
 Player::Player(float x, float y, float z, float size) {
@@ -108,42 +112,103 @@ void Player::setAcceleration(Vector3f accel) {
 	acceleration = accel;
 }
 
+bool Player::isJumping() const {
+
+	return (verticalState == JUMP && velocity[1] < 0);
+}
+
+bool Player::isFalling() const {
+
+	return (verticalState == FALL);
+}
+
 //속도에 따라 Player의 위치를 update하는 함수. 본문의 idle function에 삽입.
+
 void Player::move() {
 
-	Vector3f v(0, -2, 0);
-	setAcceleration(v);
-
-	if (horizontalState == HORIZONTAL_STATE::MOVE || verticalState == VERTICAL_STATE::FALL) {
+	if (horizontalState == MOVE) {
 
 		center = center + velocity;
 	}
 
-	if (verticalState == VERTICAL_STATE::JUMP) {
+	else if (horizontalState == STOPH) {
+
+		Vector3f velocitystoph(0, velocity[1], velocity[2]);
+		velocity = velocitystoph;
+
+		center = center + velocity;
+	}
+
+	Vector3f zero(0, 0, 0);
+	Vector3f acceleration(0, -1, 0);
+
+	if (verticalState == JUMP) {
+
+		setAcceleration(acceleration);
+
+		if (isJumping()) {
+			verticalState = FALL;
+		}
 
 		velocity = velocity + acceleration;
 		center = center + velocity;
 	}
 
+	else if (verticalState == FALL) {
+
+		setAcceleration(zero);
+
+		Vector3f velocityfall(velocity[0], -3, velocity[2]);
+		setVelocity(velocityfall);
+
+		center = center + velocity;
+	}
+
+	else if (verticalState == STOPV) {
+
+		setAcceleration(zero);
+
+		Vector3f velocitystopv(velocity[0], 0, velocity[2]);
+		velocity = velocitystopv;
+
+		center = center + velocity;
+	}
 }
 
 //Player를 그리는 함수. 왼쪽을 바라볼 때와 오른쪽을 바라볼 때 서로 다른 이미지로 mapping해야 함.
+
 void Player::draw() const {
 
-	glColor3f(1.0f, 1.0f, 1.0f);
-	glPointSize(10.0f);
-
-	glBegin(GL_POINTS);
-		glVertex3f((face == LEFT) ? center[0] - size / 2 : center[0] + size / 2, center[1], center[2]);
-	glEnd();
-
-	glColor3f(0.45f, 0.26f, 0.33f);
+	glEnable(GL_TEXTURE_2D); // 텍스쳐작업
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+	glBindTexture(GL_TEXTURE_2D, textures[7].getTextureID());
 
 	glBegin(GL_QUADS);
-		glVertex3f(center[0] - size / 2, center[1] + size / 2, center[2]);
-		glVertex3f(center[0] + size / 2, center[1] + size / 2, center[2]);
-		glVertex3f(center[0] + size / 2, center[1] - size / 2, center[2]);
-		glVertex3f(center[0] - size / 2, center[1] - size / 2, center[2]);
-	glEnd();
 
+	if (face == LEFT) {
+
+		glTexCoord2f(0.0f, 0.0f);
+		glVertex2f(center[0] - size / 2, center[1] - size / 2);
+		glTexCoord2f(0.0f, 1.0f);
+		glVertex2f(center[0] - size / 2, center[1] + size / 2);
+		glTexCoord2f(1.0f, 1.0f);
+		glVertex2f(center[0] + size / 2, center[1] + size / 2);
+		glTexCoord2f(1.0f, 0.0f);
+		glVertex2f(center[0] + size / 2, center[1] - size / 2);
+	}
+
+	else {
+
+		glTexCoord2f(1.0f, 0.0f);
+			glVertex3f(center[0] - size / 2, center[1] - size / 2, center[2]);
+		glTexCoord2f(1.0f, 1.0f);
+			glVertex3f(center[0] - size / 2, center[1] + size / 2, center[2]);
+		glTexCoord2f(0.0f, 1.0f);
+			glVertex3f(center[0] + size / 2, center[1] + size / 2, center[2]);
+		glTexCoord2f(0.0f, 0.0f);
+			glVertex3f(center[0] + size / 2, center[1] - size / 2, center[2]);
+	}
+
+	glEnd();
+	glDisable(GL_TEXTURE_2D);
 }

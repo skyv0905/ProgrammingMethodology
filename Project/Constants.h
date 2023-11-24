@@ -12,4 +12,4 @@
 #define SCALE 28
 #define PIXEL (WINDOW_WIDTH)/SCALE
 
-#define PLAYER_SIZE 40
+#define PLAYER_SIZE 60

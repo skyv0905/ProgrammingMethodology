@@ -4,21 +4,23 @@
 extern std::vector<Stage>stages;
 
 Platform::Platform() {
+
 	width = PIXEL;
 	center[0] = center[1] = center[2] = 0;
-	Platformtype = PLATFORM::GROUND;
 }
 
 Platform::Platform(float x, float y, PLATFORM type, GLuint ID) {
+
 	width = PIXEL;
 	center[0] = (x - 14) * PIXEL + (width / 2);
-	center[1] = (y - 14) * PIXEL + (width / 2);;
+	center[1] = (y - 14) * PIXEL + (width / 2);
 	center[2] = 0;
 	this->Platformtype = type;
 	this->textureID = ID;
 }
 
 void Platform::setPlatform(float x, float y, PLATFORM type, GLuint ID) {
+
 	center[0] = x;
 	center[1] = y;
 	center[2] = 0;
@@ -27,18 +29,22 @@ void Platform::setPlatform(float x, float y, PLATFORM type, GLuint ID) {
 }
 
 Platform::PLATFORM Platform::getPlatformType() {
+
 	return Platformtype;
 }
 
 float Platform::getWidth() const {
+
 	return width;
 }
 
 Vector3f Platform::getCenter() const {
+
 	return center;
 }
 
 void Platform::draw() {
+
 	glEnable(GL_TEXTURE_2D); // 텍스쳐작업
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 	glBindTexture(GL_TEXTURE_2D, textureID);

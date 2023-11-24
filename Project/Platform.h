@@ -7,7 +7,7 @@
 class Platform
 {
 public:
-	enum class PLATFORM {MIDDLE, GROUND};
+	enum class PLATFORM {LEFT, RIGHT, BOTTOM, NONE, MIDDLE};
 
 	Platform();
 	Platform(float x, float y, PLATFORM type, GLuint ID);
