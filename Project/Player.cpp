@@ -10,6 +10,8 @@ extern std::vector<Texture> textures;
 extern bool bPressLeft;
 extern bool bPressRight;
 
+extern void playMusicBubbleShotted();
+
 //Player 생성자. 기본값으로는 왼쪽을 보고 있으며, 멈추어있는 상태.
 Player::Player(float x, float y, float z, float size) {
 
@@ -21,6 +23,32 @@ Player::Player(float x, float y, float z, float size) {
 	horizontalState = STOPH;
 	verticalState = STOPV;
 	bubbleCooldown = 0;
+	life = 3;
+}
+
+Player::EX_STATE Player::getExState() {
+
+	return exState;
+}
+
+void Player::setUnderAttack(bool ua) {
+
+	bUnderAttack = ua;
+}
+
+bool Player::getUnderAttack() {
+
+	return bUnderAttack;
+}
+
+void Player::setLife(int life) {
+
+	this->life = life;
+}
+
+int Player::getLife() {
+
+	return life;
 }
 
 //Player의 중심 위치를 Vector3f 클래스의 객체를 받아 설정
@@ -54,6 +82,10 @@ Vector3f Player::getVelocity() const {
 void Player::setAcceleration(Vector3f accel) {
 
 	acceleration = accel;
+}
+
+float Player::getSize() const{
+	return size;
 }
 
 //Player가 바라보는 방향을 enum FACE를 type으로 한 값으로 설정하는 함수
@@ -148,6 +180,7 @@ Bubble Player::shootBubble() {
 	bub.setMTL(m);
 	
 	bubbleCooldown = 0.7f; // 버블 재발동 대기시간
+	playMusicBubbleShotted();
 
 	return bub;
 }
@@ -191,6 +224,7 @@ void Player::move() {
 	center_before = center;
 	velocity = velocity + acceleration;
 	center = center + velocity;
+	toInside();
 	return;
 }
 
@@ -198,6 +232,7 @@ void Player::moveX() {
 	center_before = center;
 	velocity[0] = velocity[0] + acceleration[0];
 	center[0] = center[0] + velocity[0];
+	toInside();
 	return;
 }
 
@@ -205,12 +240,32 @@ void Player::moveY() {
 	center_before = center;
 	velocity[1] = velocity[1] + acceleration[1];
 	center[1] = center[1] + velocity[1];
+	toInside();
 	return;
+}
+
+void Player::toInside() {
+	if (center[0] < -boundaryX) {
+		center[0] = center[0] + WINDOW_WIDTH;
+	}
+
+	if (center[0] > boundaryX) {
+		center[0] = center[0] - WINDOW_WIDTH;
+	}
+
+	if (center[1] < -boundaryY) {
+		center[1] = center[1] + WINDOW_HEIGHT;
+	}
+
+	if (center[1] > boundaryY) {
+		center[1] = center[1] + WINDOW_HEIGHT;
+	}
 }
 
 //Player를 그리는 함수. 왼쪽을 바라볼 때와 오른쪽을 바라볼 때 서로 다른 이미지로 mapping해야 함.
 
 void Player::draw() const {
+
 	glColor3f(1.0f, 1.0f, 1.0f);
 	glBegin(GL_LINE_LOOP);
 	glVertex2f(center[0] - (size / 2), center[1] - size / 2);
@@ -224,16 +279,40 @@ void Player::draw() const {
 	glBindTexture(GL_TEXTURE_2D, textures[7].getTextureID());
 
 	auto f = face == LEFT ? 1 : -1;
+	drawTexture(f);
+
+	glPushMatrix(); // 주어진 범위 이탈 시 자연스럽게 보이기 위한 더미 이미지
+	glTranslatef(-WINDOW_WIDTH, 0.0f, 0.0f);
+	drawTexture(f);
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(WINDOW_WIDTH, 0.0f, 0.0f);
+	drawTexture(f);
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(0.0f, -WINDOW_HEIGHT, 0.0f);
+	drawTexture(f);
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(0.0f, WINDOW_HEIGHT, 0.0f);
+	drawTexture(f);
+	glPopMatrix();
+
+	glDisable(GL_TEXTURE_2D);
+}
+
+void Player::drawTexture(int face) const {
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0f, 0.0f);
-	glVertex2f(center[0] - (size / 2) * f, center[1] - size / 2);
+	glVertex2f(center[0] - (size / 2) * face, center[1] - size / 2);
 	glTexCoord2f(0.0f, 1.0f);
-	glVertex2f(center[0] - (size / 2) * f, center[1] + size / 2);
+	glVertex2f(center[0] - (size / 2) * face, center[1] + size / 2);
 	glTexCoord2f(1.0f, 1.0f);
-	glVertex2f(center[0] + (size / 2) * f, center[1] + size / 2);
+	glVertex2f(center[0] + (size / 2) * face, center[1] + size / 2);
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex2f(center[0] + (size / 2) * f, center[1] - size / 2);
-
+	glVertex2f(center[0] + (size / 2) * face, center[1] - size / 2);
 	glEnd();
-	glDisable(GL_TEXTURE_2D);
 }

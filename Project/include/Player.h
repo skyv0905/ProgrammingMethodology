@@ -10,9 +10,12 @@ public:
 	enum FACE { LEFT, RIGHT }; // 바라보는 방향 상태
 	enum HORIZONTAL_STATE { STOPH , MOVE }; // 좌우 이동 상태
 	enum VERTICAL_STATE { STOPV, JUMP, FALL }; // 상하 이동 상태
-	enum EX_STATE { FREE, FORCEMOVING, INVINCIBLE }; // 기타 상태 #FREE : 제한 없음, #FORCEMOVING : 스테이지 시작 시 강제 이동 상태, #INVINCIBLE : 무적 상태
+	enum EX_STATE { FREE, FORCEMOVING, COLLISION }; // 기타 상태 #FREE : 제한 없음, #FORCEMOVING : 스테이지 시작 시 강제 이동 상태, #INVINCIBLE : 무적 상태
 
 	Player(float x, float y, float z, float size);
+
+	void setLife(int life);
+	int getLife();
 
 	void setCenter(const Vector3f& c);
 	Vector3f getCenter() const;
@@ -20,11 +23,17 @@ public:
 	void setVelocity(const Vector3f& v);
 	Vector3f getVelocity() const;
 	void setAcceleration(Vector3f accel);
+	float getSize() const;
 
 	void setFace(FACE f);
 	void setHorizontalState(HORIZONTAL_STATE hState);
 	void setVerticalState(VERTICAL_STATE hState);
 	void setExState(EX_STATE eState);
+
+	EX_STATE getExState();
+
+	void setUnderAttack(bool ua);
+	bool getUnderAttack();
 
 	void printState() {
 		std::cout << "Horizontal: ";
@@ -66,9 +75,11 @@ public:
 	void move();
 	void moveX();
 	void moveY();
-	void draw() const;
+	void toInside();
+	virtual void draw() const;
+	virtual void drawTexture(int face) const;
 
-private:
+protected:
 	Vector3f center_before;
 	Vector3f center;
 	Vector3f velocity;
@@ -80,5 +91,8 @@ private:
 	EX_STATE exState;
 	float bubbleCooldown; // 버블 재발사 대기시간
 	int moveTick; // 플레이어 초기 설정 이동 시간
+
+	bool bUnderAttack;
+	int life;
 };
 

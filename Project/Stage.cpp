@@ -28,8 +28,21 @@ void Stage::setStagePlatform(std::vector<std::string> info) {
 			}
 
 			else if (info[i].substr(j, 2) == "▲") { // 플레이어 위치
-				player_origin.setPos((x - 14) * PIXEL + (PLAYER_SIZE / 2), (y - 14) * PIXEL + (PLAYER_SIZE / 2), 0);
+				player_origin.setPos((x - 14) * PIXEL + (PLAYER_SIZE / 2.f), (y - 14) * PIXEL + (PLAYER_SIZE / 2.f), 0);
 			}
+
+			else if (info[i].substr(j, 2) == "◆") { 
+				enemy_origin1.setPos((x - 14) * PIXEL + (PLAYER_SIZE / 2.f), (y - 14) * PIXEL + (PLAYER_SIZE / 2.f), 0);
+			}
+
+			else if (info[i].substr(j, 2) == "★") {
+				enemy_origin2.setPos((x - 14) * PIXEL + (PLAYER_SIZE / 2.f), (y - 14) * PIXEL + (PLAYER_SIZE / 2.f), 0);
+			}
+
+			else if (info[i].substr(j, 2) == "◎") {
+				enemy_origin3.setPos((x - 14) * PIXEL + (PLAYER_SIZE / 2.f), (y - 14) * PIXEL + (PLAYER_SIZE / 2.f), 0);
+			}
+
 			x += 1.0f;
 		}
 		x = 0.0f;
@@ -37,7 +50,7 @@ void Stage::setStagePlatform(std::vector<std::string> info) {
 
 	}
 }
-std::vector<Platform> Stage::getStagePlatform() {
+std::vector<Platform>& Stage::getStagePlatform() {
 
 	return platforms;
 }
@@ -60,6 +73,18 @@ void Stage::startSecondTransition() {
 
 Vector3f Stage::getPlayerOrigin() {
 	return player_origin;
+}
+
+Vector3f Stage::getEnemyOrigin1() {
+	return enemy_origin1;
+}
+
+Vector3f Stage::getEnemyOrigin2() {
+	return enemy_origin2;
+}
+
+Vector3f Stage::getEnemyOrigin3() {
+	return enemy_origin3;
 }
 
 void Stage::draw() {

@@ -19,7 +19,7 @@ public:
 
 	void setStagePlatformTextureID(GLuint a, GLuint b, GLuint c); // 플랫폼에 넣을 텍스쳐의 ID 설정
 	void setStagePlatform(std::vector<std::string> info);
-	std::vector<Platform> getStagePlatform();
+	std::vector<Platform>& getStagePlatform();
 
 	float getFirstTransition(); // 화면 전환 관리
 	float getSecondTransition();
@@ -27,6 +27,10 @@ public:
 	void startSecondTransition();
 
 	Vector3f getPlayerOrigin();
+
+	Vector3f getEnemyOrigin1();
+	Vector3f getEnemyOrigin2();
+	Vector3f getEnemyOrigin3();
 
 	void draw();
 	void move();
@@ -42,5 +46,8 @@ private:
 	float secondTransition;
 
 	Vector3f player_origin; // 플레이어 시작 위치
+	Vector3f enemy_origin1;
+	Vector3f enemy_origin2;
+	Vector3f enemy_origin3;
 };
 

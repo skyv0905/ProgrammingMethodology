@@ -1,6 +1,8 @@
 ﻿#include "Bubble.h"
 #include <GL/freeglut.h>
 
+extern void playMusicBubblePopped();
+
 Bubble::Bubble() {
 	bubbleState = GROWING;
 	size = 1.0f / 10;

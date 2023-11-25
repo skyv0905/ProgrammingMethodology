@@ -131,7 +131,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>./lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>freeglut.lib;FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>freeglut.lib;FreeImage.lib;OpenAL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -156,7 +156,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Bubble.cpp" />
+    <ClCompile Include="CollisionDetector.cpp" />
+    <ClCompile Include="CollisionHandler.cpp" />
     <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="Life.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Material.cpp" />
@@ -168,6 +171,8 @@
     <ClCompile Include="Vector4f.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CollisionDetector.h" />
+    <ClInclude Include="CollisionHandler.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="include\Bubble.h" />
@@ -177,6 +182,7 @@
     <ClInclude Include="include\Texture.h" />
     <ClInclude Include="include\Vector3f.h" />
     <ClInclude Include="include\Vector4f.h" />
+    <ClInclude Include="Life.h" />
     <ClInclude Include="Platform.h" />
     <ClInclude Include="Stage.h" />
   </ItemGroup>
