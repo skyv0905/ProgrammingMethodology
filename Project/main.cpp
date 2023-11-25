@@ -93,9 +93,9 @@ void initialize() {
 	platformInfo.push_back("■■                                                ■■");
 	platformInfo.push_back("■■▣▣      ▣▣▣▣▣▣▣▣▣▣▣▣▣▣      ▣▣■■");
 	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■                                                ■■");
 	platformInfo.push_back("■■      ▲                                        ■■");
-	platformInfo.push_back("■■                                                ■■");
-	platformInfo.push_back("■■                                                ■■");
 	platformInfo.push_back("■■■■■■■■■■■■■■■■■■■■■■■■■■■■");
 
 
@@ -124,7 +124,7 @@ T abs(T num) {
 	return num >= 0 ? num : -num;
 }
 
-void handleCollisionX(Player& player, Platform& platform, int i) { // 마지막 int i 는 디버깅용도임
+bool handleCollisionX(Player& player, Platform& platform) {
 
 	auto w = platform.getWidth();
 	auto d = (PLAYER_SIZE + w) / 2; // 접할 때 거리
@@ -138,46 +138,39 @@ void handleCollisionX(Player& player, Platform& platform, int i) { // 마지막 
 	Vector4f ltrb_pf(center_pf[0] - w / 2, center_pf[1] + w / 2, center_pf[0] + w / 2, center_pf[1] - w / 2); // 플랫폼 좌표
 
 	if (abs(dx) < d && abs(dy) < d) { // 충돌 발생
-		Vector3f v;
-		for (auto i = 0; i < 3; i++) {
-			v[i] = center_pl[i] - center_plb[i];
-		}
+		Vector3f v = center_pl - center_plb;
 		Vector3f new_center(center_pl);
 
-		char side;
+		auto side = -1;
 
-		if (v[0] < 0) { // 반대로 쫒아갈 때 먼저 부딪히는 면 / (0 : 왼) , (1 : 위) , (2 : 오른) , (3 : 아래)
+		if (v[0] < 0) { // (0 : 왼) , (1 : 위) , (2 : 오른) , (3 : 아래)
 			side = 0;
 		}
 		else if (v[0] > 0) {
 			side = 2;
 		}
-		else return;
+
+		if (platform.getPlatformType() == Platform::PLATFORM::MIDDLE) return 1;
 
 		switch (side) {
 		case 0:
-			if (platform.getPlatformType() == Platform::PLATFORM::MIDDLE) break;
-			cout << i << "번째 플랫폼에 플레이어 충돌 발생 ";
+			cout << "플레이어 충돌 발생 (왼쪽)" << endl;
 			new_center[0] = ltrb_pf[2] + PLAYER_SIZE / 2; // 플랫폼 오른쪽 좌표 + (플레이어 사이즈 / 2)
-			cout << "(왼쪽)" << new_center[0] << endl;
 			player.setCenter(new_center);
 			player.setHorizontalState(Player::STOPH);
 			break;
 		case 2:
-			if (platform.getPlatformType() == Platform::PLATFORM::MIDDLE) break;
-			cout << i << "번째 플랫폼에 플레이어 충돌 발생 ";
-			cout << "(오른쪽)" << endl;
+			cout << "플레이어 충돌 발생 (오른쪽)" << endl;
 			new_center[0] = ltrb_pf[0] - PLAYER_SIZE / 2; // 플랫폼 왼쪽 좌표 - (플레이어 사이즈 / 2)
 			player.setCenter(new_center);
 			player.setHorizontalState(Player::STOPH);
 			break;
 		}
 	}
-
-	return;
+	return 0;
 }
 
-void handleCollisionY(Player& player, Platform& platform, int i) { // 마지막 int i 는 디버깅용도임
+void handleCollisionY(Player& player, Platform& platform, int collisionDetectedX) {
 
 	auto w = platform.getWidth();
 	auto d = (PLAYER_SIZE + w) / 2; // 접할 때 거리
@@ -191,34 +184,28 @@ void handleCollisionY(Player& player, Platform& platform, int i) { // 마지막 
 	Vector4f ltrb_pf(center_pf[0] - w / 2, center_pf[1] + w / 2, center_pf[0] + w / 2, center_pf[1] - w / 2); // 플랫폼 좌표
 
 	if (abs(dx) < d && abs(dy) < d) { // 충돌 발생
-		Vector3f v;
-		for (auto i = 0; i < 3; i++) {
-			v[i] = center_pl[i] - center_plb[i];
-		}
+		Vector3f v = center_pl - center_plb;
 		Vector3f new_center(center_pl);
 
-		char side;
+		auto side = -1;
 
-		if (v[1] < 0) { // 반대로 쫒아갈 때 먼저 부딪히는 면 / (0 : 왼) , (1 : 위) , (2 : 오른) , (3 : 아래)
+		if (v[1] < 0) { // (0 : 왼) , (1 : 위) , (2 : 오른) , (3 : 아래)
 			side = 3;
 		}
 		else if (v[1] > 0) {
 			side = 1;
 		}
-		else return;
 
 		switch (side) {
 		case 1:
 			if (platform.getPlatformType() == Platform::PLATFORM::MIDDLE) break;
-			cout << i << "번째 플랫폼에 플레이어 충돌 발생 ";
-			cout << "(위쪽)" << endl;
+			cout << "플레이어 충돌 발생 (위쪽)" << endl;
 			new_center[1] = ltrb_pf[3] - PLAYER_SIZE / 2; // 플랫폼 아래쪽 좌표 - (플레이어 사이즈 / 2)
 			player.setCenter(new_center);
 			break;
 		case 3:
-			if (player.getVelocity()[1] > 0) break;
-			cout << i << "번째 플랫폼에 플레이어 충돌 발생 ";
-			cout << "(아래쪽)" << endl;
+			if (player.getVelocity()[1] > 0 || collisionDetectedX) break;
+			cout << "플레이어 충돌 발생 (아래쪽)" << endl;
 			new_center[1] = ltrb_pf[1] + PLAYER_SIZE / 2; // 플랫폼 위쪽 좌표 + (플레이어 사이즈 / 2)
 			player.setCenter(new_center);
 			PlayerIsOnPlatform = true;
@@ -239,7 +226,8 @@ bool bottomDetector(Player& player, Platform& platform, int i) {
 	float dy = center_pl[1] - center_pf[1];
 	float dy2 = center_plb[1] - center_pf[1];
 
-	if (abs(dx) < d && abs(dy) <= d && player.getVelocity()[1] <= 0) {
+	//if (abs(dx) < d && abs(dy) <= d && player.getVelocity()[1] <= 0) {
+	if (abs(dx) < d && (center_pl[1] - center_pf[1] - d) <= 0 && (center_plb[1] - center_pf[1] - d) >= 0) {
 		//cout << "바닥" << endl;
 		return true;
 	}
@@ -259,14 +247,6 @@ void idle() {
 		if (load == NONE) {
 		// 플레이어와 버블 움직임을 업데이트 하는 부분
 
-			//if (player.isMoving()) {
-			//	player.move(); // 플레이어 이동
-			//}
-
-			/*for (int i = 0; i < stages[1].getStagePlatform().size(); ++i) {
-				handleCollision(player, stages[1].getStagePlatform()[i]);
-			}*/
-
 			for (auto& bubble : bubbles) { // 버블 이동
 				bubble.move();
 			}
@@ -274,18 +254,17 @@ void idle() {
 			// 충돌 제어
 			int i = 0;
 			bool findBottom = false;
-			if (player.isMoving() || player.isJumping() || player.isFalling()) {
-				if (player.isMoving()) {
-					player.moveX();
-					for (auto& platform : stages[state].getStagePlatform()) {
-						handleCollisionX(player, platform, i);
-					}
-				}
-				if (player.isJumping() || player.isFalling()) {
-					player.moveY();
-					for (auto& platform : stages[state].getStagePlatform()) {
-						handleCollisionY(player, platform, i);
-					}
+			int collisionDetectedX = 0;
+			if (player.isMoving()) {
+				player.moveX(); // 플레이어 이동
+			}
+			for (auto& platform : stages[state].getStagePlatform()) {
+				collisionDetectedX += handleCollisionX(player, platform); // MIDDLE 플랫폼 체크
+			}
+			if (player.isJumping() || player.isFalling()) {
+				player.moveY(); // 플레이어 이동
+				for (auto& platform : stages[state].getStagePlatform()) {
+					handleCollisionY(player, platform, collisionDetectedX);
 				}
 			}
 			for (auto& platform : stages[state].getStagePlatform()) {
@@ -311,22 +290,13 @@ void idle() {
 						}
 					}
 				}
-				// 플랫폼 - 플레이어간 충돌
-				/*
-				if (player.isMoving() || player.isJumping() || player.isFalling()) {
-					player.moveX();
-					handleCollision(player, platform, i);
-					player.moveY();
-					handleCollision(player, platform, i);
-				}
-				*/
 				if (!findBottom && (!player.isJumping() || (player.isJumping() && player.getVelocity()[1] < 0)) && bottomDetector(player, platform, i)) {
-					PlayerIsOnPlatform = true;
 					findBottom = true;
 				}
 				i += 1;
 			}
 			if (findBottom) {
+				PlayerIsOnPlatform = true;
 				player.setVerticalState(Player::STOPV);
 			}
 			else if (!findBottom && !player.isJumping() && !player.isFalling()) {
@@ -451,7 +421,7 @@ void keyboardDown(unsigned char key, int x, int y) {
 		}
 
 		else if (state == STAGE1) {
-			if (player.canShootBubble()) {
+			if (player.canShootBubble() && load == NONE) {
 				bubbles.push_back(player.shootBubble());
 			}
 		}

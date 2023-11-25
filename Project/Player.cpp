@@ -70,7 +70,7 @@ void Player::setHorizontalState(HORIZONTAL_STATE hState) {
 	Vector3f new_velocity(velocity);
 	switch (horizontalState) {
 	case MOVE:
-		new_velocity[0] = 7.0f * ((face == LEFT) ? -1 : 1);
+		new_velocity[0] = 7.0f * ((face == LEFT) ? -1 : 1); // 좌우 이동 속도
 		break;
 	case STOPH:
 		new_velocity[0] = 0.0f;
@@ -87,11 +87,11 @@ void Player::setVerticalState(VERTICAL_STATE hState) {
 	Vector3f new_acceleration;
 	switch (verticalState) {
 	case JUMP:
-		new_velocity[1] = 15.0f;
-		new_acceleration.setPos(0.0f, -0.75f, 0.0f);
+		new_velocity[1] = 15.0f; // 점프 속도
+		new_acceleration.setPos(0.0f, -0.75f, 0.0f); // 점프 가속도
 		break;
 	case FALL:
-		new_velocity[1] = -3.0f;
+		new_velocity[1] = -5.0f; // 낙하 속도
 		new_acceleration.setPos(0.0f, 0.0f, 0.0f);
 		break;
 	case STOPV:
@@ -135,9 +135,12 @@ Bubble Player::shootBubble() {
 	bub.setVelocity((face == LEFT) ? velocityleft : velocityright);
 
 	Material m;
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<float> r(0.0f, 1.0f);
 
 	m.setEmission(0.1f, 0.1f, 0.1f, 1.0f);
-	m.setAmbient(0.4f, 0.1f, 0.4f, 1.0f);
+	m.setAmbient(r(gen), r(gen), r(gen), 1.0f);
 	m.setDiffuse(0.7f, 0.7f, 0.7f, 1.0f);
 	m.setSpecular(1.0f, 1.0f, 1.0f, 1.0f);
 	m.setShininess(10.0f);
