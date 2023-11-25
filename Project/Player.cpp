@@ -191,6 +191,7 @@ void Player::move() {
 	center_before = center;
 	velocity = velocity + acceleration;
 	center = center + velocity;
+	toInside();
 	return;
 }
 
@@ -198,6 +199,7 @@ void Player::moveX() {
 	center_before = center;
 	velocity[0] = velocity[0] + acceleration[0];
 	center[0] = center[0] + velocity[0];
+	toInside();
 	return;
 }
 
@@ -205,7 +207,26 @@ void Player::moveY() {
 	center_before = center;
 	velocity[1] = velocity[1] + acceleration[1];
 	center[1] = center[1] + velocity[1];
+	toInside();
 	return;
+}
+
+void Player::toInside() {
+	if (center[0] < -boundaryX) {
+		center[0] = center[0] + WINDOW_WIDTH;
+	}
+
+	if (center[0] > boundaryX) {
+		center[0] = center[0] - WINDOW_WIDTH;
+	}
+
+	if (center[1] < -boundaryY) {
+		center[1] = center[1] + WINDOW_HEIGHT;
+	}
+
+	if (center[1] > boundaryY) {
+		center[1] = center[1] + WINDOW_HEIGHT;
+	}
 }
 
 //Player를 그리는 함수. 왼쪽을 바라볼 때와 오른쪽을 바라볼 때 서로 다른 이미지로 mapping해야 함.
@@ -224,16 +245,40 @@ void Player::draw() const {
 	glBindTexture(GL_TEXTURE_2D, textures[7].getTextureID());
 
 	auto f = face == LEFT ? 1 : -1;
+	drawTexture(f);
+
+	glPushMatrix(); // 주어진 범위 이탈 시 자연스럽게 보이기 위한 더미 이미지
+	glTranslatef(-WINDOW_WIDTH, 0.0f, 0.0f);
+	drawTexture(f);
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(WINDOW_WIDTH, 0.0f, 0.0f);
+	drawTexture(f);
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(0.0f, -WINDOW_HEIGHT, 0.0f);
+	drawTexture(f);
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(0.0f, WINDOW_HEIGHT, 0.0f);
+	drawTexture(f);
+	glPopMatrix();
+
+	glDisable(GL_TEXTURE_2D);
+}
+
+void Player::drawTexture(int face) const  {
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0f, 0.0f);
-	glVertex2f(center[0] - (size / 2) * f, center[1] - size / 2);
+	glVertex2f(center[0] - (size / 2) * face, center[1] - size / 2);
 	glTexCoord2f(0.0f, 1.0f);
-	glVertex2f(center[0] - (size / 2) * f, center[1] + size / 2);
+	glVertex2f(center[0] - (size / 2) * face, center[1] + size / 2);
 	glTexCoord2f(1.0f, 1.0f);
-	glVertex2f(center[0] + (size / 2) * f, center[1] + size / 2);
+	glVertex2f(center[0] + (size / 2) * face, center[1] + size / 2);
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex2f(center[0] + (size / 2) * f, center[1] - size / 2);
-
+	glVertex2f(center[0] + (size / 2) * face, center[1] - size / 2);
 	glEnd();
-	glDisable(GL_TEXTURE_2D);
 }

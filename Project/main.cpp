@@ -74,18 +74,18 @@ void initialize() {
 	Stage stage1(1);
 	stage1.setStagePlatformTextureID(textures[1].getTextureID(), textures[2].getTextureID(), textures[3].getTextureID());
 	vector<string> platformInfo;
-	platformInfo.push_back("■■■■■■■■■■■■■■■■■■■■■■■■■■■■");
+	platformInfo.push_back("■■■■■■■■■■■            ■■■■■■■■■■■");
 	platformInfo.push_back("■■                                                ■■");
 	platformInfo.push_back("■■                                                ■■");
 	platformInfo.push_back("■■                                                ■■");
 	platformInfo.push_back("■■                                                ■■");
 	platformInfo.push_back("■■                                                ■■");
 	platformInfo.push_back("■■                                                ■■");
-	platformInfo.push_back("■■                                                ■■");
-	platformInfo.push_back("■■              ■■                              ■■");
-	platformInfo.push_back("■■                                                ■■");
-	platformInfo.push_back("■■                                                ■■");
-	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■            ■■                ▣▣            ■■");
+	platformInfo.push_back("                    ■            ▣                    ");
+	platformInfo.push_back("                      ■        ▣                      ");
+	platformInfo.push_back("                        ■    ▣                        ");
+	platformInfo.push_back("                                                        ");
 	platformInfo.push_back("■■▣▣      ▣▣▣▣▣▣▣▣▣▣▣▣▣▣      ▣▣■■");
 	platformInfo.push_back("■■                                                ■■");
 	platformInfo.push_back("■■                                                ■■");
@@ -101,7 +101,7 @@ void initialize() {
 	platformInfo.push_back("■■                                                ■■");
 	platformInfo.push_back("■■                                                ■■");
 	platformInfo.push_back("■■      ▲                                        ■■");
-	platformInfo.push_back("■■■■■■■■■■■■■■■■■■■■■■■■■■■■");
+	platformInfo.push_back("■■■■■■■■■■■            ■■■■■■■■■■■");
 
 
 	stage1.setStagePlatform(platformInfo);

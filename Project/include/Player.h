@@ -66,7 +66,9 @@ public:
 	void move();
 	void moveX();
 	void moveY();
+	void toInside();
 	void draw() const;
+	void drawTexture(int face) const;
 
 private:
 	Vector3f center_before;
