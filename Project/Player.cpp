@@ -21,6 +21,7 @@ Player::Player(float x, float y, float z, float size) {
 	horizontalState = STOPH;
 	verticalState = STOPV;
 	bubbleCooldown = 0;
+	bubbleID = 0;
 }
 
 //Player의 중심 위치를 Vector3f 클래스의 객체를 받아 설정

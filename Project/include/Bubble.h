@@ -19,6 +19,8 @@ public:
 	Vector3f getCenter() const;
 	void setVelocity(const Vector3f& v);
 	Vector3f getVelocity() const;
+	bool isWillDeleted() const;
+	void setDeleted();
 	
 	void setMTL(const Material& m);
 	void setState(STATE s);
@@ -33,6 +35,7 @@ private:
 	float size;
 	int slice;
 	int stack;
+	bool willDeleted; // 버블-플레이어 충돌 시 상태 저장용
 
 	Vector3f center;
 	Vector3f velocity;

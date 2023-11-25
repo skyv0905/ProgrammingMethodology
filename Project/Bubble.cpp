@@ -4,11 +4,13 @@
 Bubble::Bubble() {
 	bubbleState = GROWING;
 	size = 1.0f / 10;
+	willDeleted = false;
 }
 
 Bubble::Bubble(float r, int sl, int st) : radius(r), slice(sl), stack(st) {
 	bubbleState = GROWING;
 	size = 1.0f / 10;
+	willDeleted = false;
 }
 
 void Bubble::setRadius(float r) {
@@ -54,6 +56,14 @@ void Bubble::setVelocity(const Vector3f& v) {
 Vector3f Bubble::getVelocity() const {
 
 	return velocity;
+}
+
+bool Bubble::isWillDeleted() const {
+	return willDeleted;
+}
+
+void Bubble::setDeleted() {
+	willDeleted = true;
 }
 
 void Bubble::setMTL(const Material& m) {
