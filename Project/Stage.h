@@ -26,6 +26,8 @@ public:
 	void startFirstTransition();
 	void startSecondTransition();
 
+	Vector3f getPlayerOrigin();
+
 	void draw();
 	void move();
 
@@ -38,5 +40,7 @@ private:
 
 	float firstTransition; // 화면 전환 관리
 	float secondTransition;
+
+	Vector3f player_origin; // 플레이어 시작 위치
 };
 

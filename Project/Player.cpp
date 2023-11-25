@@ -16,6 +16,7 @@ Player::Player(float x, float y, float z, float size) {
 	center[0] = x; center[1] = y; center[2] = z;
 	this->size = size;
 	velocity[0] = 0; velocity[1] = 0, velocity[2] = 0;
+	center_before = center;
 	face = RIGHT;
 	horizontalState = STOPH;
 	verticalState = STOPV;
@@ -24,7 +25,6 @@ Player::Player(float x, float y, float z, float size) {
 
 //Player의 중심 위치를 Vector3f 클래스의 객체를 받아 설정
 void Player::setCenter(const Vector3f& c) {
-
 	center = c;
 }
 
@@ -32,6 +32,11 @@ void Player::setCenter(const Vector3f& c) {
 Vector3f Player::getCenter() const {
 
 	return center;
+}
+
+Vector3f Player::getCenterB() const {
+
+	return center_before;
 }
 
 //Player의 속도를 Vector3f 클래스의 객체를 받아 설정하는 함수
@@ -46,6 +51,11 @@ Vector3f Player::getVelocity() const {
 	return velocity;
 }
 
+void Player::setAcceleration(Vector3f accel) {
+
+	acceleration = accel;
+}
+
 //Player가 바라보는 방향을 enum FACE를 type으로 한 값으로 설정하는 함수
 void Player::setFace(FACE f) {
 
@@ -56,11 +66,62 @@ void Player::setFace(FACE f) {
 void Player::setHorizontalState(HORIZONTAL_STATE hState) {
 
 	horizontalState = hState;
+
+	Vector3f new_velocity(velocity);
+	switch (horizontalState) {
+	case MOVE:
+		new_velocity[0] = 7.0f * ((face == LEFT) ? -1 : 1);
+		break;
+	case STOPH:
+		new_velocity[0] = 0.0f;
+		break;
+	}
+	setVelocity(new_velocity);
 }
 
 void Player::setVerticalState(VERTICAL_STATE hState) {
 
 	verticalState = hState;
+
+	Vector3f new_velocity(velocity);
+	Vector3f new_acceleration;
+	switch (verticalState) {
+	case JUMP:
+		new_velocity[1] = 15.0f;
+		new_acceleration.setPos(0.0f, -0.75f, 0.0f);
+		break;
+	case FALL:
+		new_velocity[1] = -3.0f;
+		new_acceleration.setPos(0.0f, 0.0f, 0.0f);
+		break;
+	case STOPV:
+		new_velocity[1] = 0.0f;
+		new_acceleration.setPos(0.0f, 0.0f, 0.0f);
+		break;
+	}
+	setVelocity(new_velocity);
+	setAcceleration(new_acceleration);
+}
+
+//Player가 좌우로 움직이고 있으면 true, 아니면 false를 반환하는 함수
+bool Player::isMoving() const {
+
+	return !(horizontalState == STOPH);
+}
+
+bool Player::isJumping() const {
+
+	return (verticalState == JUMP);
+}
+
+bool Player::isFalling() const {
+
+	return (verticalState == FALL);
+}
+
+void Player::setExState(EX_STATE eState) {
+
+	exState = eState;
 }
 
 //Player가 쏜 버블을 Bubble을 class로 한 객체로 생성하는 함수. 생성 위치는 플레이어의 위치. 크기느 player와 같게. 속도의 부호는 player의 방향에 따라서. MTL은 일정하게.
@@ -83,16 +144,9 @@ Bubble Player::shootBubble() {
 
 	bub.setMTL(m);
 	
-	bubbleCooldown = 0.5f; // 버블 재발동 대기시간
+	bubbleCooldown = 0.7f; // 버블 재발동 대기시간
 
 	return bub;
-}
-
-//Player가 움직이고 있으면 true, 아니면 false를 반환하는 함수
-bool Player::isMoving() const {
-
-	if (!velocity[0] && !velocity[1] && !velocity[2]) return false;
-	else return true;
 }
 
 void Player::mBubbleCooldown() {
@@ -107,107 +161,75 @@ bool Player::canShootBubble() const { // 버블 발사 가능할 시 true 리턴
 	return bubbleCooldown == 0.0f;
 }
 
-void Player::setAcceleration(Vector3f accel) {
+void Player::mMoveTick() {
+	moveTick--;
 
-	acceleration = accel;
+	if (moveTick < 0) {
+		moveTick = 0;
+	}
 }
 
-bool Player::isJumping() const {
-
-	return (verticalState == JUMP && velocity[1] < 0);
+bool Player::moveFinished() const { // return moveTice == 0
+	return moveTick == 0;
 }
 
-bool Player::isFalling() const {
-
-	return (verticalState == FALL);
+void Player::moveTo(Vector3f dst, float tick) { // Vector3f를 받아서 tick프레임 안에 그 위치로 플레이어를 이동하게 velocity 설정
+	Vector3f new_velocity;
+	moveTick = tick;
+	for (auto i = 0; i < 3; i++) {
+		new_velocity[i] = (dst[i] - center[i]) / moveTick;
+	}
+	setVelocity(new_velocity);
 }
 
 //속도에 따라 Player의 위치를 update하는 함수. 본문의 idle function에 삽입.
 
 void Player::move() {
+	center_before = center;
+	velocity = velocity + acceleration;
+	center = center + velocity;
+	return;
+}
 
-	if (horizontalState == MOVE) {
+void Player::moveX() {
+	center_before = center;
+	velocity[0] = velocity[0] + acceleration[0];
+	center[0] = center[0] + velocity[0];
+	return;
+}
 
-		center = center + velocity;
-	}
-
-	else if (horizontalState == STOPH) {
-
-		Vector3f velocitystoph(0, velocity[1], velocity[2]);
-		velocity = velocitystoph;
-
-		center = center + velocity;
-	}
-
-	Vector3f zero(0, 0, 0);
-	Vector3f acceleration(0, -1, 0);
-
-	if (verticalState == JUMP) {
-
-		setAcceleration(acceleration);
-
-		if (isJumping()) {
-			verticalState = FALL;
-		}
-
-		velocity = velocity + acceleration;
-		center = center + velocity;
-	}
-
-	else if (verticalState == FALL) {
-
-		setAcceleration(zero);
-
-		Vector3f velocityfall(velocity[0], -3, velocity[2]);
-		setVelocity(velocityfall);
-
-		center = center + velocity;
-	}
-
-	else if (verticalState == STOPV) {
-
-		setAcceleration(zero);
-
-		Vector3f velocitystopv(velocity[0], 0, velocity[2]);
-		velocity = velocitystopv;
-
-		center = center + velocity;
-	}
+void Player::moveY() {
+	center_before = center;
+	velocity[1] = velocity[1] + acceleration[1];
+	center[1] = center[1] + velocity[1];
+	return;
 }
 
 //Player를 그리는 함수. 왼쪽을 바라볼 때와 오른쪽을 바라볼 때 서로 다른 이미지로 mapping해야 함.
 
 void Player::draw() const {
+	glColor3f(1.0f, 1.0f, 1.0f);
+	glBegin(GL_LINE_LOOP);
+	glVertex2f(center[0] - (size / 2), center[1] - size / 2);
+	glVertex2f(center[0] - (size / 2), center[1] + size / 2);
+	glVertex2f(center[0] + (size / 2), center[1] + size / 2);
+	glVertex2f(center[0] + (size / 2), center[1] - size / 2);
+	glEnd();
 
 	glEnable(GL_TEXTURE_2D); // 텍스쳐작업
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 	glBindTexture(GL_TEXTURE_2D, textures[7].getTextureID());
 
+	auto f = face == LEFT ? 1 : -1;
 	glBegin(GL_QUADS);
-
-	if (face == LEFT) {
-
-		glTexCoord2f(0.0f, 0.0f);
-		glVertex2f(center[0] - size / 2, center[1] - size / 2);
-		glTexCoord2f(0.0f, 1.0f);
-		glVertex2f(center[0] - size / 2, center[1] + size / 2);
-		glTexCoord2f(1.0f, 1.0f);
-		glVertex2f(center[0] + size / 2, center[1] + size / 2);
-		glTexCoord2f(1.0f, 0.0f);
-		glVertex2f(center[0] + size / 2, center[1] - size / 2);
-	}
-
-	else {
-
-		glTexCoord2f(1.0f, 0.0f);
-			glVertex3f(center[0] - size / 2, center[1] - size / 2, center[2]);
-		glTexCoord2f(1.0f, 1.0f);
-			glVertex3f(center[0] - size / 2, center[1] + size / 2, center[2]);
-		glTexCoord2f(0.0f, 1.0f);
-			glVertex3f(center[0] + size / 2, center[1] + size / 2, center[2]);
-		glTexCoord2f(0.0f, 0.0f);
-			glVertex3f(center[0] + size / 2, center[1] - size / 2, center[2]);
-	}
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f(center[0] - (size / 2) * f, center[1] - size / 2);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(center[0] - (size / 2) * f, center[1] + size / 2);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f(center[0] + (size / 2) * f, center[1] + size / 2);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f(center[0] + (size / 2) * f, center[1] - size / 2);
 
 	glEnd();
 	glDisable(GL_TEXTURE_2D);

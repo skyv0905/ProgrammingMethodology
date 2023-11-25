@@ -18,9 +18,11 @@ clock_t end_t;
 string NAME = "BubbleBobble!";
 string string1 = "Press Space Bar to Start";
 
-enum GameState { BEGIN, STAGE1TRANSITION, STAGE1 };
+enum StageState { BEGIN, STAGE1 };
+enum LoadState { NONE, LOAD_STAGE, LOAD_PLAYER, LOAD_ENEMY };
 
-GameState state;
+StageState state;
+LoadState load;
 
 vector<Stage> stages;
 vector<Bubble> bubbles;
@@ -35,119 +37,6 @@ bool PlayerIsOnPlatform;
 
 Player player(0, 0, 0.0f, PLAYER_SIZE);
 Light light(boundaryX, boundaryY, boundaryX / 2, GL_LIGHT0);
-
-// Stage와 Player간의 collision detecting
-
-bool isCollisionDetectedLeft(const Player& player, Platform& platform) {
-
-	if (platform.getPlatformType() == Platform::PLATFORM::LEFT) {
-
-		if (((player.getCenter()[0] - PLAYER_SIZE / 2) - (platform.getCenter()[0] + platform.getWidth() / 2) < 0) && player.getVelocity()[0] < 0) {
-
-			cout << "isCollisionDetectedLeft\n";
-			return true;
-		}
-
-		else
-			return false;
-	}
-
-	else
-		return false;
-}
-
-bool isCollisionDetectedRight(const Player& player, Platform& platform) {
-
-	if (platform.getPlatformType() == Platform::PLATFORM::RIGHT) {
-
-		if (((player.getCenter()[0] + PLAYER_SIZE / 2.f) - (platform.getCenter()[0] - platform.getWidth() / 2.f) > 0) && player.getVelocity()[0] > 0) {
-
-			return true;
-		}
-
-		else
-			return false;
-	}
-
-	else
-		return false;
-}
-
-bool isCollisionDetectedBottom(const Player& player, Platform& platform) {
-
-	if (platform.getPlatformType() == Platform::PLATFORM::BOTTOM) {
-
-		if ( ( ((player.getCenter()[1] - PLAYER_SIZE / 2.f) - (platform.getCenter()[1] + platform.getWidth() / 2.f)) < 0 ) && player.getVelocity()[1] < 0) {
-
-			return true;
-		}
-
-		else
-			return false;
-	}
-
-	else
-		return false;
-}
-
-bool isCollisionDetectedMiddle(const Player& player, Platform& platform) {
-
-	if (platform.getPlatformType() == Platform::PLATFORM::MIDDLE) {
-
-		if ( ( ((player.getCenter()[1] - PLAYER_SIZE / 2.f) - (platform.getCenter()[1] + platform.getWidth() / 2.f)) < 0  && ((player.getCenter()[1] - PLAYER_SIZE / 2.f) - (platform.getCenter()[1] + platform.getWidth() / 2.f)) > -10)
-			&& ((platform.getCenter()[0] - platform.getWidth() / 2.f <= player.getCenter()[0]) && (player.getCenter()[0] <= platform.getCenter()[0] + platform.getWidth() / 2.f))
-			&& player.getVelocity()[1] < 0) {
-
-			return true;
-		}
-
-		else
-			return false;
-	}
-
-	else
-		return false;
-}
-
-// Stage와 Player간의 collision handling
-
-void handleCollision(Player& player, Platform& platform) {
-
-	if (state == STAGE1 && isCollisionDetectedLeft(player, platform)) {
-
-		Vector3f playerposition(-boundaryX + 50 + PLAYER_SIZE / 2.f, player.getCenter()[1], player.getCenter()[2]);
-		player.setCenter(playerposition);
-		player.setHorizontalState(Player::HORIZONTAL_STATE::STOPH);
-		PlayerIsOnPlatform = false;
-	}
-
-	if (state == STAGE1 && isCollisionDetectedRight(player, platform)) {
-
-		Vector3f playerposition(boundaryX - 50 - PLAYER_SIZE / 2.f, player.getCenter()[1], player.getCenter()[2]);
-		player.setCenter(playerposition);
-		player.setHorizontalState(Player::HORIZONTAL_STATE::STOPH);
-		PlayerIsOnPlatform = false;
-	}
-
-	if (state == STAGE1 && isCollisionDetectedBottom(player, platform)) {
-
-		Vector3f playerposition(player.getCenter()[0], -boundaryY + 25.f + PLAYER_SIZE / 2.f + 3, player.getCenter()[2]);
-		player.setCenter(playerposition);
-		player.setVerticalState(Player::VERTICAL_STATE::STOPV);
-		PlayerIsOnPlatform = false;
-	}
-
-	if (state == STAGE1 && isCollisionDetectedMiddle(player, platform)) {
-
-		Vector3f playerposition(player.getCenter()[0], platform.getCenter()[1] + platform.getWidth() / 2.f + PLAYER_SIZE / 2.f + 3, player.getCenter()[2]);
-		player.setCenter(playerposition);
-		player.setVerticalState(Player::VERTICAL_STATE::STOPV);
-		PlayerIsOnPlatform = true;
-	}
-
-	else
-		PlayerIsOnPlatform = false;
-}
 
 void initialize() {
 
@@ -188,12 +77,7 @@ void initialize() {
 	platformInfo.push_back("■■                                                ■■");
 	platformInfo.push_back("■■                                                ■■");
 	platformInfo.push_back("■■                                                ■■");
-	platformInfo.push_back("■■                                                ■■");
-	platformInfo.push_back("■■                                                ■■");
-	platformInfo.push_back("■■                                                ■■");
-	platformInfo.push_back("■■                                                ■■");
-	platformInfo.push_back("■■▣▣      ▣▣▣▣▣▣▣▣▣▣▣▣▣▣      ▣▣■■");
-	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■              ■■                              ■■");
 	platformInfo.push_back("■■                                                ■■");
 	platformInfo.push_back("■■                                                ■■");
 	platformInfo.push_back("■■                                                ■■");
@@ -205,6 +89,11 @@ void initialize() {
 	platformInfo.push_back("■■▣▣      ▣▣▣▣▣▣▣▣▣▣▣▣▣▣      ▣▣■■");
 	platformInfo.push_back("■■                                                ■■");
 	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■▣▣      ▣▣▣▣▣▣▣▣▣▣▣▣▣▣      ▣▣■■");
+	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■      ▲                                        ■■");
 	platformInfo.push_back("■■                                                ■■");
 	platformInfo.push_back("■■                                                ■■");
 	platformInfo.push_back("■■■■■■■■■■■■■■■■■■■■■■■■■■■■");
@@ -215,10 +104,148 @@ void initialize() {
 	platformInfo.clear();
 
 	state = BEGIN;
+	load = NONE;
 
 	//Player의 초기 State setting
-	player.setVerticalState(Player::VERTICAL_STATE::FALL);
-	player.setHorizontalState(Player::HORIZONTAL_STATE::MOVE);
+	player.setVerticalState(Player::VERTICAL_STATE::STOPV);
+	player.setHorizontalState(Player::HORIZONTAL_STATE::STOPH);
+	player.setExState(Player::FORCEMOVING);
+
+	// light 초기 설정
+	light.setAmbient(0.5f, 0.5f, 0.5f, 1.0f);
+	light.setDiffuse(0.7f, 0.7f, 0.7f, 1.0f);
+	light.setSpecular(1.0f, 1.0f, 1.0f, 1.0f);
+}
+
+// Stage와 Player간의 collision handling
+
+template <typename T>
+T abs(T num) {
+	return num >= 0 ? num : -num;
+}
+
+void handleCollisionX(Player& player, Platform& platform, int i) { // 마지막 int i 는 디버깅용도임
+
+	auto w = platform.getWidth();
+	auto d = (PLAYER_SIZE + w) / 2; // 접할 때 거리
+	auto center_pl = player.getCenter();
+	auto center_pf = platform.getCenter();
+	auto center_plb = player.getCenterB();
+	float dx = center_pl[0] - center_pf[0];
+	float dy = center_pl[1] - center_pf[1];
+
+	Vector4f ltrb_pl(center_pl[0] - PLAYER_SIZE / 2, center_pl[1] + PLAYER_SIZE / 2, center_pl[0] + PLAYER_SIZE / 2, center_pl[1] - PLAYER_SIZE / 2); // 플레이어 좌표 LEFT / TOP / RIGHT / BOTTOM
+	Vector4f ltrb_pf(center_pf[0] - w / 2, center_pf[1] + w / 2, center_pf[0] + w / 2, center_pf[1] - w / 2); // 플랫폼 좌표
+
+	if (abs(dx) < d && abs(dy) < d) { // 충돌 발생
+		Vector3f v;
+		for (auto i = 0; i < 3; i++) {
+			v[i] = center_pl[i] - center_plb[i];
+		}
+		Vector3f new_center(center_pl);
+
+		char side;
+
+		if (v[0] < 0) { // 반대로 쫒아갈 때 먼저 부딪히는 면 / (0 : 왼) , (1 : 위) , (2 : 오른) , (3 : 아래)
+			side = 0;
+		}
+		else if (v[0] > 0) {
+			side = 2;
+		}
+		else return;
+
+		switch (side) {
+		case 0:
+			if (platform.getPlatformType() == Platform::PLATFORM::MIDDLE) break;
+			cout << i << "번째 플랫폼에 플레이어 충돌 발생 ";
+			new_center[0] = ltrb_pf[2] + PLAYER_SIZE / 2; // 플랫폼 오른쪽 좌표 + (플레이어 사이즈 / 2)
+			cout << "(왼쪽)" << new_center[0] << endl;
+			player.setCenter(new_center);
+			player.setHorizontalState(Player::STOPH);
+			break;
+		case 2:
+			if (platform.getPlatformType() == Platform::PLATFORM::MIDDLE) break;
+			cout << i << "번째 플랫폼에 플레이어 충돌 발생 ";
+			cout << "(오른쪽)" << endl;
+			new_center[0] = ltrb_pf[0] - PLAYER_SIZE / 2; // 플랫폼 왼쪽 좌표 - (플레이어 사이즈 / 2)
+			player.setCenter(new_center);
+			player.setHorizontalState(Player::STOPH);
+			break;
+		}
+	}
+
+	return;
+}
+
+void handleCollisionY(Player& player, Platform& platform, int i) { // 마지막 int i 는 디버깅용도임
+
+	auto w = platform.getWidth();
+	auto d = (PLAYER_SIZE + w) / 2; // 접할 때 거리
+	auto center_pl = player.getCenter();
+	auto center_pf = platform.getCenter();
+	auto center_plb = player.getCenterB();
+	float dx = center_pl[0] - center_pf[0];
+	float dy = center_pl[1] - center_pf[1];
+
+	Vector4f ltrb_pl(center_pl[0] - PLAYER_SIZE / 2, center_pl[1] + PLAYER_SIZE / 2, center_pl[0] + PLAYER_SIZE / 2, center_pl[1] - PLAYER_SIZE / 2); // 플레이어 좌표 LEFT / TOP / RIGHT / BOTTOM
+	Vector4f ltrb_pf(center_pf[0] - w / 2, center_pf[1] + w / 2, center_pf[0] + w / 2, center_pf[1] - w / 2); // 플랫폼 좌표
+
+	if (abs(dx) < d && abs(dy) < d) { // 충돌 발생
+		Vector3f v;
+		for (auto i = 0; i < 3; i++) {
+			v[i] = center_pl[i] - center_plb[i];
+		}
+		Vector3f new_center(center_pl);
+
+		char side;
+
+		if (v[1] < 0) { // 반대로 쫒아갈 때 먼저 부딪히는 면 / (0 : 왼) , (1 : 위) , (2 : 오른) , (3 : 아래)
+			side = 3;
+		}
+		else if (v[1] > 0) {
+			side = 1;
+		}
+		else return;
+
+		switch (side) {
+		case 1:
+			if (platform.getPlatformType() == Platform::PLATFORM::MIDDLE) break;
+			cout << i << "번째 플랫폼에 플레이어 충돌 발생 ";
+			cout << "(위쪽)" << endl;
+			new_center[1] = ltrb_pf[3] - PLAYER_SIZE / 2; // 플랫폼 아래쪽 좌표 - (플레이어 사이즈 / 2)
+			player.setCenter(new_center);
+			break;
+		case 3:
+			if (player.getVelocity()[1] > 0) break;
+			cout << i << "번째 플랫폼에 플레이어 충돌 발생 ";
+			cout << "(아래쪽)" << endl;
+			new_center[1] = ltrb_pf[1] + PLAYER_SIZE / 2; // 플랫폼 위쪽 좌표 + (플레이어 사이즈 / 2)
+			player.setCenter(new_center);
+			PlayerIsOnPlatform = true;
+			break;
+		}
+	}
+
+	return;
+}
+
+bool bottomDetector(Player& player, Platform& platform, int i) {
+	auto w = platform.getWidth();
+	auto d = (PLAYER_SIZE + w) / 2; // 접할 때 거리
+	auto center_pl = player.getCenter();
+	auto center_plb = player.getCenterB();
+	auto center_pf = platform.getCenter();
+	float dx = center_pl[0] - center_pf[0];
+	float dy = center_pl[1] - center_pf[1];
+	float dy2 = center_plb[1] - center_pf[1];
+
+	if (abs(dx) < d && abs(dy) <= d && player.getVelocity()[1] <= 0) {
+		//cout << "바닥" << endl;
+		return true;
+	}
+	else {
+		return false;
+	}
 }
 
 void idle() {
@@ -227,93 +254,125 @@ void idle() {
 
 	if ((float)(end_t - start_t) > 1000 / 30.0f) { // 프레임 제어
 
+		/* ▼ 아래는 로드 중일때는 실행되지 않음 ▼ */
+
+		if (load == NONE) {
 		// 플레이어와 버블 움직임을 업데이트 하는 부분
 
-		player.move();
+			//if (player.isMoving()) {
+			//	player.move(); // 플레이어 이동
+			//}
 
-		for (int i = 0; i < stages[1].getStagePlatform().size(); ++i) {
-			handleCollision(player, stages[1].getStagePlatform()[i]);
-		}
+			/*for (int i = 0; i < stages[1].getStagePlatform().size(); ++i) {
+				handleCollision(player, stages[1].getStagePlatform()[i]);
+			}*/
 
-		for (int i = 0; i < bubbles.size(); ++i) {
-			bubbles[i].move();
-		}
+			for (auto& bubble : bubbles) { // 버블 이동
+				bubble.move();
+			}
 
-		if (bPressLeft) {
-
-			player.setHorizontalState(player.HORIZONTAL_STATE::MOVE);
-			Vector3f velocityleft(-3, player.getVelocity()[1], player.getVelocity()[2]);
-			player.setVelocity(velocityleft);
-			player.setFace(Player::FACE::LEFT);
-
-			if (!PlayerIsOnPlatform)
-				player.setVerticalState(player.VERTICAL_STATE::FALL);
-		}
-
-		if (bPressRight) {
-
-			player.setHorizontalState(player.HORIZONTAL_STATE::MOVE);
-			Vector3f velocityright(3, player.getVelocity()[1], player.getVelocity()[2]);
-			player.setVelocity(velocityright);
-			player.setFace(Player::FACE::RIGHT);
-
-			if (!PlayerIsOnPlatform)
-				player.setVerticalState(player.VERTICAL_STATE::FALL);
-		}
-
-		if (bPressUp) {
-
-			Vector3f velocityjump(player.getVelocity()[0], 3, player.getVelocity()[2]);
-			player.setVerticalState(player.VERTICAL_STATE::JUMP);
-			player.setVelocity(velocityjump);
-		}
-
-		if (bPressDown) {
-
-			player.setVerticalState(player.VERTICAL_STATE::FALL);
-		}
-
-		// 충돌 제어
-		int i = 0;
-		for (auto& platform : stages[1].getStagePlatform()) {
-			// 플랫폼 - 버블간 충돌
-			if (platform.getPlatformType() != Platform::PLATFORM::MIDDLE) {
-				for (auto& bubble : bubbles) {
-					if (bubble.getState() == Bubble::STOP) {
-						continue;
+			// 충돌 제어
+			int i = 0;
+			bool findBottom = false;
+			if (player.isMoving() || player.isJumping() || player.isFalling()) {
+				if (player.isMoving()) {
+					player.moveX();
+					for (auto& platform : stages[state].getStagePlatform()) {
+						handleCollisionX(player, platform, i);
 					}
-
-					auto d = bubble.getRadius() + (platform.getWidth() / 2); // 접할 때 거리
-					auto center_b = bubble.getCenter();
-					auto center_p = platform.getCenter();
-					float dx = center_p[0] - center_b[0];
-					float dy = center_p[1] - center_b[1];
-					dx *= dx < 0 ? -1 : 1;
-					dy *= dy < 0 ? -1 : 1;
-
-					if (dx < d && dy < d) { // 충돌 발생
-						cout << i << "번째 플랫폼에 버블 충돌 발생" << endl;
-						bubble.handleCollision(center_p, platform.getWidth() / 2);
+				}
+				if (player.isJumping() || player.isFalling()) {
+					player.moveY();
+					for (auto& platform : stages[state].getStagePlatform()) {
+						handleCollisionY(player, platform, i);
 					}
 				}
 			}
-			i += 1;
-			// 플랫폼 - 플레이어간 충돌
-			// todo
+			for (auto& platform : stages[state].getStagePlatform()) {
+				// 플랫폼 - 버블간 충돌
+
+				if (platform.getPlatformType() != Platform::PLATFORM::MIDDLE) {
+					for (auto& bubble : bubbles) {
+						if (bubble.getState() == Bubble::STOP) {
+							continue;
+						}
+
+						auto d = bubble.getRadius() + (platform.getWidth() / 2); // 접할 때 거리
+						auto center_b = bubble.getCenter();
+						auto center_p = platform.getCenter();
+						float dx = center_p[0] - center_b[0];
+						float dy = center_p[1] - center_b[1];
+						dx *= dx < 0 ? -1 : 1;
+						dy *= dy < 0 ? -1 : 1;
+
+						if (dx < d && dy < d) { // 충돌 발생
+							cout << i << "번째 플랫폼에 버블 충돌 발생" << endl;
+							bubble.handleCollision(center_p, platform.getWidth() / 2);
+						}
+					}
+				}
+				// 플랫폼 - 플레이어간 충돌
+				/*
+				if (player.isMoving() || player.isJumping() || player.isFalling()) {
+					player.moveX();
+					handleCollision(player, platform, i);
+					player.moveY();
+					handleCollision(player, platform, i);
+				}
+				*/
+				if (!findBottom && (!player.isJumping() || (player.isJumping() && player.getVelocity()[1] < 0)) && bottomDetector(player, platform, i)) {
+					PlayerIsOnPlatform = true;
+					findBottom = true;
+				}
+				i += 1;
+			}
+			if (findBottom) {
+				player.setVerticalState(Player::STOPV);
+			}
+			else if (!findBottom && !player.isJumping() && !player.isFalling()) {
+				PlayerIsOnPlatform = false;
+				player.setVerticalState(Player::FALL);
+			}
+
+			if (bPressLeft || bPressRight) {
+
+				player.setFace(bPressLeft ? Player::LEFT : Player::RIGHT);
+				player.setHorizontalState(player.HORIZONTAL_STATE::MOVE);
+			}
+			else player.setHorizontalState(Player::STOPH);
 		}
+		/* ▲ 위는 로드 중일때는 실행되지 않음 ▲ */
 
 		// 스테이지 전환
-		if (state == STAGE1TRANSITION) {
+		if (load == LOAD_STAGE) {
+			stages[state].move();
 
-			if (stages[1].getFirstTransition()) {
-				stages[1].move();
+			if (stages[state].getFirstTransition() == 0) { // 로드 상태
+				load = LOAD_PLAYER;
+				player.moveTo(stages[state].getPlayerOrigin(), 20.0f);
 			}
 		}
-		
 
+		if (load == LOAD_PLAYER) { // 플레이어 로드
+			player.move();
+			player.mMoveTick();
+
+			if (player.moveFinished()) {
+				player.setHorizontalState(Player::STOPH);
+				player.setVerticalState(Player::FALL);
+				load = NONE;
+			}
+		}
+
+		if (load == LOAD_ENEMY) { // 적 로드
+
+		}
+
+		/* ▼ 아래는 로드 상태와 상관없이 실행됨 ▼ */
 		if (!player.canShootBubble()) { // 버블 재발사 대기시간 제어
 			player.mBubbleCooldown();
 		}
+		/* ▲ 위는 로드 상태와 상관없이 실행됨 ▲ */
 
 		start_t = end_t; // 프레임 제어 끝
 	}
@@ -345,32 +404,16 @@ void display() {
 		glPopMatrix();
 	}
 
-	else if (state == STAGE1TRANSITION) {
-
-		bPressLeft = true;
-
+	else if (state != BEGIN) {
 		glPushMatrix(); // 화면 전환 효과
-		if (stages[1].getFirstTransition()) glTranslatef(0, stages[1].getFirstTransition(), 0);
-		stages[1].draw();
-
-		if (stages[1].getFirstTransition() == 0) {
-			bPressLeft = false;  state = STAGE1;
-		}
-
+		if (stages[state].getFirstTransition()) glTranslatef(0, stages[state].getFirstTransition(), 0);
+		if (stages[state].getSecondTransition()) glTranslatef(0, stages[state].getSecondTransition() + WINDOW_HEIGHT, 0); // 화면 전환 끝
+		
+		stages[state].draw();
 		glPopMatrix();
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		player.draw();
-
-	}
-
-	else if (state == STAGE1) {
-		//2D 요소들 draw
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-		stages[1].draw();
 		player.draw();
 
 		//3D 요소들 draw
@@ -378,17 +421,12 @@ void display() {
 		glEnable(GL_LIGHTING);
 		glEnable(light.getID());
 
-		light.setAmbient(0.5f, 0.5f, 0.5f, 1.0f);
-		light.setDiffuse(0.7f, 0.7f, 0.7f, 1.0f);
-		light.setSpecular(1.0f, 1.0f, 1.0f, 1.0f);
-
 		light.draw();
 
 		//버블 draw
-		for (int i = 0; i < bubbles.size(); ++i) {
-			bubbles[i].draw();
+		for (auto& bubble : bubbles) {
+			bubble.draw();
 		}
-
 	}
 
 
@@ -407,8 +445,9 @@ void keyboardDown(unsigned char key, int x, int y) {
 	if (key == 32) {
 
 		if (state == BEGIN) {
-			state = STAGE1TRANSITION;
-			stages[1].startFirstTransition();
+			state = STAGE1;
+			stages[state].startFirstTransition();
+			load = LOAD_STAGE;
 		}
 
 		else if (state == STAGE1) {
@@ -433,6 +472,9 @@ void keyboardDown(unsigned char key, int x, int y) {
 			cout << "현재 플레이어의 중심: " << c[0] << ", " << c[1] << ", " << c[2] << endl;
 			break;
 		}
+	case 'p':
+		player.printState();
+		break;
 	}
 }
 
@@ -441,17 +483,24 @@ void specialKeyDown(int key, int x, int y) {
 	// 방향키 눌릴 때 Player가 움직이는 상태로 지정하여 속도만큼 위치를 업데이트할 수 있도록 (업데이트 여부는 Player의 move 함수에 구문 있음)
 	if (key == GLUT_KEY_LEFT) {
 
-		bPressLeft = true;
+		if (load == NONE) {
+			bPressLeft = true;
+		}
 	}
 
 	if (key == GLUT_KEY_RIGHT) {
 
-		bPressRight = true;
+		if (load == NONE) {
+			bPressRight = true;
+		}
 	}
 
 	if (key == GLUT_KEY_UP) {
 
 		bPressUp = true;
+		if (!player.isJumping() && !player.isFalling() && load == NONE) {
+			player.setVerticalState(player.VERTICAL_STATE::JUMP);
+		}
 	}
 
 	if (key == GLUT_KEY_DOWN) {
@@ -469,13 +518,11 @@ void specialKeyUp(int key, int x, int y) {
 	case GLUT_KEY_LEFT:
 
 		bPressLeft = false;
-		player.setHorizontalState(player.HORIZONTAL_STATE::STOPH);
 		break;
 
 	case GLUT_KEY_RIGHT:
 
 		bPressRight = false;
-		player.setHorizontalState(player.HORIZONTAL_STATE::STOPH);
 		break;
 
 	case GLUT_KEY_UP:

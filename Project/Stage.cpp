@@ -14,7 +14,7 @@ void Stage::setStagePlatform(std::vector<std::string> info) {
 
 			if ((j % 2) != 0) continue;
 
-			if (info[i].substr(j, 2) == "■") {
+			if (info[i].substr(j, 2) == "■") { // 단단 플랫폼
 
 				if (j == 2) { Platform p(x, y, Platform::PLATFORM::LEFT, platform_texture_type1); platforms.push_back(p); }
 				else if (j == info[i].size() - 4) { Platform p(x, y, Platform::PLATFORM::RIGHT, platform_texture_type1); platforms.push_back(p); }
@@ -22,9 +22,13 @@ void Stage::setStagePlatform(std::vector<std::string> info) {
 				else { Platform p(x, y, Platform::PLATFORM::NONE, platform_texture_type1); platforms.push_back(p); }
 			}
 
-			else if (info[i].substr(j, 2) == "▣") {
+			else if (info[i].substr(j, 2) == "▣") { // 중간 플랫폼
 				Platform p(x, y, Platform::PLATFORM::MIDDLE, platform_texture_type2);
 				platforms.push_back(p);
+			}
+
+			else if (info[i].substr(j, 2) == "▲") { // 플레이어 위치
+				player_origin.setPos((x - 14) * PIXEL + (PLAYER_SIZE / 2), (y - 14) * PIXEL + (PLAYER_SIZE / 2), 0);
 			}
 			x += 1.0f;
 		}
@@ -52,6 +56,10 @@ void Stage::startFirstTransition() {
 
 void Stage::startSecondTransition() {
 	secondTransition = -WINDOW_HEIGHT;
+}
+
+Vector3f Stage::getPlayerOrigin() {
+	return player_origin;
 }
 
 void Stage::draw() {

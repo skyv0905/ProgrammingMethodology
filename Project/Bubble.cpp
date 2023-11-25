@@ -65,7 +65,7 @@ void Bubble::setState(STATE s) { // GROWING 속도는 Player.cpp에서 init
 	bubbleState = s;
 	if (bubbleState == UP) {
 		size = 1.0f;
-		velocity.setPos(0.0f, 30.0f, 0.0f); // 상승 속도
+		velocity.setPos(0.0f, 5.0f, 0.0f); // 상승 속도
 	}
 	else if (bubbleState == STOP) {
 		velocity.setPos(0.0f, 0.0f, 0.0f); // 정지 속도
