@@ -76,8 +76,8 @@ public:
 	void moveX();
 	void moveY();
 	void toInside();
-	virtual void draw() const;
-	virtual void drawTexture(int face) const;
+	void draw() const;
+	void drawTexture(int face) const;
 
 protected:
 	Vector3f center_before;
