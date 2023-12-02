@@ -14,5 +14,5 @@
 
 #define PLAYER_SIZE PIXEL * 2
 
-enum StageState { BEGIN, STAGE1, OVER };
+enum class StageState { BEGIN, STAGE1, OVER };
 enum LoadState { NONE, LOAD_STAGE, LOAD_PLAYER, LOAD_ENEMY };

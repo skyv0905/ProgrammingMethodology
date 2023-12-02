@@ -7,7 +7,6 @@
 #include <queue>
 #include <map>
 #include <cmath>
-#include "GL/freeglut.h"
 
 #include "Constants.h"
 #include "Stage.h"
@@ -22,6 +21,7 @@
 
 #include <AL/al.h>
 #include <AL/alc.h>
+#include <GL/freeglut.h>
 
 using namespace std;
 
@@ -31,9 +31,6 @@ clock_t fps;
 
 string NAME = "BubbleBobble!";
 string string1 = "Press Space Bar to Start";
-
-enum class StageState { BEGIN = 0, STAGE1, STAGE2 };
-enum LoadState { NONE, LOAD_STAGE, LOAD_PLAYER, LOAD_ENEMY };
 
 StageState state; // 스테이지 상태
 LoadState load; // 로드 상태
@@ -261,7 +258,7 @@ long long getCurrentTime() {
 
 bool iscurrentStateover() {
 
-	return state == OVER;
+	return state == StageState::OVER;
 }
 
 void startBlink() {
@@ -367,7 +364,6 @@ void initialize() {
 	platformInfo.push_back("                                                        ");
 	platformInfo.push_back("                                                        ");
 	platformInfo.push_back("                                                        ");
-	platformInfo.push_back("                                                        ");
 	platformInfo.push_back("                            ◆                          ");
 	platformInfo.push_back("■■▣▣      ▣▣▣▣▣▣▣▣▣▣▣▣▣▣      ▣▣■■");
 	platformInfo.push_back("■■                                                ■■");
@@ -437,7 +433,7 @@ void initialize() {
 
 	// 게임 STATE init
 	state = StageState::BEGIN;
-	load = NONE;
+	load = LoadState::NONE;
 
 	//Player의 초기 State setting
 	player.setVerticalState(Player::VERTICAL_STATE::STOPV);
@@ -629,7 +625,7 @@ void idle() {
 
 				if (lifes.size() == 0) {
 
-					state = OVER;
+					state = StageState::OVER;
 					playMusicGameOver();
  
 					alSourceStop(sourcebackground);
@@ -739,7 +735,7 @@ void idle() {
 			stages[static_cast<int>(state)].move();
 
 			if (stages[static_cast<int>(state)].getFirstTransition() == 0) { // 로드 상태
-				load = LOAD_PLAYER;
+				load = LoadState::LOAD_PLAYER;
 				player.moveTo(stages[static_cast<int>(state)].getPlayerOrigin(), 20.0f);
 			}
 		}
@@ -753,16 +749,16 @@ void idle() {
 				player.setHorizontalState(Player::STOPH);
 				player.setVerticalState(Player::STOPV);
 
-				load = LOAD_ENEMY;
+				load = LoadState::LOAD_ENEMY;
 
 				enemy1.setVerticalState(Enemy::VERTICAL_STATE::FALL);
-				enemy1.moveTo(stages[state].getEnemyOrigin1(), 20.0f);
+				enemy1.moveTo(stages[static_cast<int>(state)].getEnemyOrigin1(), 20.0f);
 
 				enemy2.setVerticalState(Enemy::VERTICAL_STATE::FALL);
-				enemy2.moveTo(stages[state].getEnemyOrigin2(), 20.0f);
+				enemy2.moveTo(stages[static_cast<int>(state)].getEnemyOrigin2(), 20.0f);
 
 				enemy3.setVerticalState(Enemy::VERTICAL_STATE::FALL);
-				enemy3.moveTo(stages[state].getEnemyOrigin3(), 20.0f);
+				enemy3.moveTo(stages[static_cast<int>(state)].getEnemyOrigin3(), 20.0f);
 			}
 		}
 
@@ -793,7 +789,7 @@ void idle() {
 
 				enemy3.setHorizontalState(Enemy::HORIZONTAL_STATE::MOVE);
 				enemy3.setVerticalState(Enemy::VERTICAL_STATE::STOPV);
-				load = NONE;
+				load = LoadState::NONE;
 			}
 		}
 
@@ -834,21 +830,18 @@ void display() {
 			glutBitmapCharacter(GLUT_BITMAP_9_BY_15, string1[i]);
 		glPopMatrix();
 	}
-	else if (state != BEGIN) {
+	else if (state == StageState::OVER) {
 
-		if (state == OVER) {
-
-			glEnable(GL_TEXTURE_2D);
-			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-			glBindTexture(GL_TEXTURE_2D, textures[9].getTextureID());
-			glBegin(GL_QUADS);
-			glTexCoord2f(0.0f, 0.0f); glVertex2f(-350, -350);
-			glTexCoord2f(0.0f, 1.0f); glVertex2f(-350, 350);
-			glTexCoord2f(1.0f, 1.0f); glVertex2f(350, 350);
-			glTexCoord2f(1.0f, 0.0f); glVertex2f(350, -350);
-			glEnd();
-			glDisable(GL_TEXTURE_2D);
-		}
+		glEnable(GL_TEXTURE_2D);
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+		glBindTexture(GL_TEXTURE_2D, textures[9].getTextureID());
+		glBegin(GL_QUADS);
+		glTexCoord2f(0.0f, 0.0f); glVertex2f(-350, -350);
+		glTexCoord2f(0.0f, 1.0f); glVertex2f(-350, 350);
+		glTexCoord2f(1.0f, 1.0f); glVertex2f(350, 350);
+		glTexCoord2f(1.0f, 0.0f); glVertex2f(350, -350);
+		glEnd();
+		glDisable(GL_TEXTURE_2D);
 	}
 	else if (state != StageState::BEGIN) {
 		glPushMatrix(); // 화면 전환 효과
@@ -863,34 +856,31 @@ void display() {
 			glPopMatrix();
 		} // 화면 전환 효과 끝
 
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-			playerrenderwithblink();
+		playerrenderwithblink();
 
-			enemy1.draw();
-			enemy2.draw();
-			enemy3.draw();
+		enemy1.draw();
+		enemy2.draw();
+		enemy3.draw();
 
-			//3D 요소들 draw
-			glEnable(GL_DEPTH_TEST);
-			glEnable(GL_LIGHTING);
-			glEnable(light.getID());
+		//3D 요소들 draw
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_LIGHTING);
+		glEnable(light.getID());
 
-			light.draw();
+		light.draw();
 
-			//버블 draw
-			for (auto& bubble : bubbles) {
-				bubble.draw();
-			}
+		//버블 draw
+		for (auto& bubble : bubbles) {
+			bubble.draw();
+		}
 
-			for (const Life& l : lifes) {
-				l.draw();
-			}
-
+		for (const Life& l : lifes) {
+			l.draw();
 		}
 	}
-
 	glDisable(light.getID());
 	glDisable(GL_LIGHTING);
 	glDisable(GL_DEPTH_TEST);

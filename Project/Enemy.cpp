@@ -71,7 +71,7 @@ void Enemy::move() {
 
 	if (moveFinished() && load == NONE) {
 
-		for (std::vector<Platform>::iterator itr = stages[state].getStagePlatform().begin(); itr != stages[state].getStagePlatform().end(); ++itr) {
+		for (std::vector<Platform>::iterator itr = stages[static_cast<int>(state)].getStagePlatform().begin(); itr != stages[static_cast<int>(state)].getStagePlatform().end(); ++itr) {
 
 			if ( (this->center[1] - itr->getCenter()[1]) == (this->size / 2.f + PIXEL / 2.f)
 				&& (this->center[0] - itr->getCenter()[0]) < PIXEL / 2
