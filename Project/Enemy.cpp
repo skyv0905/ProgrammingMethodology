@@ -72,16 +72,14 @@ void Enemy::move() {
 
 		if (moveFinished()) {
 
-			for (std::vector<Platform>::iterator itr = stages[static_cast<int>(state)].getStagePlatform().begin(); itr != stages[static_cast<int>(state)].getStagePlatform().end(); ++itr) {
+			for (auto itr = stages[static_cast<int>(state)].getStagePlatform().begin(); itr != stages[static_cast<int>(state)].getStagePlatform().end(); ++itr) {
 
-				if ((this->center[1] - itr->getCenter()[1]) == (this->size / 2.f + PIXEL / 2.f)
-					&& (this->center[0] - itr->getCenter()[0]) < PIXEL / 2
-					&& (this->center[0] - itr->getCenter()[0]) > -PIXEL / 2) {
+				if ((this->center[1] - itr->getCenter()[1]) == (this->size / 2.f + PIXEL / 2.f) // 바닥 감지해서 방향 전환
+					&& abs(this->center[0] - itr->getCenter()[0]) < PIXEL / 2) {
 
 					if (this->face == RIGHT) {
 
-						std::vector<Platform>::iterator next_itr = ++itr;
-						--itr;
+						std::vector<Platform>::iterator next_itr = itr + 1;
 
 						if ((next_itr->getCenter()[0] - itr->getCenter()[0]) > PIXEL) {
 							face = LEFT;
@@ -91,20 +89,53 @@ void Enemy::move() {
 
 					else if (this->face == LEFT) {
 
-						std::vector<Platform>::iterator before_itr = --itr;
-						++itr;
+						std::vector<Platform>::iterator before_itr = itr - 1;
 
-						if ((before_itr->getCenter()[0] - itr->getCenter()[0]) < -PIXEL) {
+						if ((itr->getCenter()[0] - before_itr->getCenter()[0]) > PIXEL) {
 							face = RIGHT;
 							setVelocity(Vector3f(5, 0, 0));
 						}
 					}
 				}
+
+				if (itr->getPlatformType() == Platform::PLATFORM::GROUND) { // 벽을 만나면
+					auto center_p = itr->getCenter();
+					auto d = (size + itr->getWidth()) / 2.0f;
+
+					if (abs(center[0] - center_p[0]) < d && abs(center[1] - center_p[1]) < d) {
+						if (face == LEFT) {
+							face = RIGHT;
+							setVelocity(Vector3f(5, 0, 0));
+						}
+						else{
+							face = LEFT;
+							setVelocity(Vector3f(-5, 0, 0));
+						}
+					}
+				}
 			}
+			toInside();
 		}
 	}
 }
 
+void Enemy::toInside() {
+	if (center[0] < -boundaryX) {
+		center[0] = center[0] + WINDOW_WIDTH;
+	}
+
+	if (center[0] > boundaryX) {
+		center[0] = center[0] - WINDOW_WIDTH;
+	}
+
+	if (center[1] < -boundaryY) {
+		center[1] = center[1] + WINDOW_HEIGHT;
+	}
+
+	if (center[1] > boundaryY) {
+		center[1] = center[1] - WINDOW_HEIGHT;
+	}
+}
 /*----------------- Velocity ------------------*/
 
 void Enemy::setVelocity(const Vector3f& v) {

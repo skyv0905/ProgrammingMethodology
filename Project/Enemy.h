@@ -35,7 +35,7 @@ public:
 	bool moveFinished() const; // return moveTice == 0
 
 	void moveTo(float tick); // tick시간안에 origin 위치로 플레이어를 이동하게 velocity 설정
-
+	void toInside();
 	void draw();
 	void drawTexture(int face);
 
