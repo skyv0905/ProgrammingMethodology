@@ -84,6 +84,7 @@ void Enemy::move() {
 
 						if ((next_itr->getCenter()[0] - itr->getCenter()[0]) > PIXEL) {
 							face = LEFT;
+							setCenter(Vector3f(itr->getCenter()[0] - (size - itr->getWidth()) / 2.0f, center[1], center[2]));
 							setVelocity(Vector3f(-5, 0, 0));
 							break;
 						}
@@ -95,6 +96,7 @@ void Enemy::move() {
 
 						if ((itr->getCenter()[0] - before_itr->getCenter()[0]) > PIXEL) {
 							face = RIGHT;
+							setCenter(Vector3f(itr->getCenter()[0] + (size - itr->getWidth()) / 2.0f, center[1], center[2]));
 							setVelocity(Vector3f(5, 0, 0));
 							break;
 						}

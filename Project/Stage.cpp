@@ -1,6 +1,8 @@
 ﻿#include <iostream>
 #include "Stage.h"
 
+extern StageState state;
+
 void Stage::setStagePlatformTextureID(GLuint a, GLuint b, GLuint c) {
 	platform_texture_type1 = a;
 	platform_texture_type2 = b;

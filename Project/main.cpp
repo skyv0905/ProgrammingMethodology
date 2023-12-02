@@ -1,8 +1,9 @@
-﻿#include <iostream>
+﻿
 #include <fstream>
 #include <string>
 #include <cstdint>
 #include <chrono>
+#include <iostream>
 
 #include <queue>
 #include <map>
@@ -125,6 +126,9 @@ void initialize() {
 	walk2.initializeTexture("resources/walk2.png");
 	textures.push_back(walk2);
 
+	Texture clear;
+	clear.initializeTexture("resources/Game_Clear.png");
+	textures.push_back(clear);
 
 	// MAIN
 	Stage main(0);
@@ -255,7 +259,7 @@ void initialize() {
 	light.setAmbient(0.7f, 0.7f, 0.7f, 1.0f);
 	light.setDiffuse(1.0f, 1.0f, 1.0f, 1.0f);
 	light.setSpecular(0.7f, 0.7f, 0.7f, 1.0f);
-	
+
 	//GAME OVER state에서의 stage
 	Stage end(0);
 	stages.push_back(end);
@@ -476,6 +480,7 @@ void idle() {
 
 		if (state == StageState::BEGIN) return; // IDLE함수는 state가 begin이면 아래를 실행하지 않음.
 		if (state == StageState::OVER) return; // IDLE함수는 state가 OVER이면 아래를 실행하지 않음.
+		if (state == StageState::CLEAR) return;
 
 		alh.playMusicBackground();
 		/* ▼ 아래는 로드 중일때는 실행되지 않음 ▼ */
@@ -498,7 +503,7 @@ void idle() {
 
 					state = StageState::OVER;
 					alh.playMusicGameOver();
- 
+
 					alSourceStop(alh.sourcebackground);
 					alSourceStop(alh.sourcepopped);
 					alSourceStop(alh.sourceshotted);
@@ -506,7 +511,7 @@ void idle() {
 				}
 			}
 
-		// 플레이어와 버블 움직임을 업데이트 하는 부분
+			// 플레이어와 버블 움직임을 업데이트 하는 부분
 			bool isBubbleCollisionDetected = false;
 			for (auto i = 0; i < bubbles.size(); i++) { // 버블 이동
 				bubbles[i].move();
@@ -619,12 +624,27 @@ void idle() {
 			if (stages[static_cast<int>(state)].stageEnds()) {
 				auto nextStage = static_cast<int>(state) + 1;
 				if (debugmode) cout << "스테이지 " << nextStage << "로 이동" << endl;
-				deleteAllBubbles(); // 모든 버블 제거
-				state = static_cast<StageState>(nextStage); // 스테이지 + 1
-				stages[nextStage - 1].startSecondTransition(); // 이전 화면 전환 효과
-				stages[nextStage].startFirstTransition(); // 다음 화면 전환 효과
-				load = LOAD_STAGE; // 로드 상태 설정
-				generateStageClearParticles(); // 파티클 출력
+
+				if (state == StageState::STAGE3) {
+
+					deleteAllBubbles(); // 모든 버블 제거
+					state = StageState::CLEAR;
+					alSourceStop(alh.sourcebackground);
+					alh.playMusicGameSucceeded();
+					
+					return;
+
+				}
+
+				else {
+					deleteAllBubbles(); // 모든 버블 제거
+					state = static_cast<StageState>(nextStage); // 스테이지 + 1
+					stages[nextStage - 1].startSecondTransition(); // 이전 화면 전환 효과
+					stages[nextStage].startFirstTransition(); // 다음 화면 전환 효과
+					load = LOAD_STAGE; // 로드 상태 설정
+					generateStageClearParticles(); // 파티클 출력
+				}
+				
 			}
 		}
 
@@ -737,7 +757,23 @@ void display() {
 		glEnd();
 		glDisable(GL_TEXTURE_2D);
 	}
+
+	else if (state == StageState::CLEAR) {
+
+		glEnable(GL_TEXTURE_2D);
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+		glBindTexture(GL_TEXTURE_2D, textures[17].getTextureID());
+		glBegin(GL_QUADS);
+		glTexCoord2f(0.0f, 0.0f); glVertex2f(-350, -350);
+		glTexCoord2f(0.0f, 1.0f); glVertex2f(-350, 350);
+		glTexCoord2f(1.0f, 1.0f); glVertex2f(350, 350);
+		glTexCoord2f(1.0f, 0.0f); glVertex2f(350, -350);
+		glEnd();
+		glDisable(GL_TEXTURE_2D);
+	}
+
 	else if (state != StageState::BEGIN) {
+
 		glPushMatrix(); // 화면 전환 효과
 		if (stages[static_cast<int>(state)].getFirstTransition()) glTranslatef(0, stages[static_cast<int>(state)].getFirstTransition(), 0); // 새로운 화면
 		stages[static_cast<int>(state)].draw();
@@ -982,7 +1018,8 @@ int main(int argc, char** argv) {
 	glutInit(&argc, argv);
 
 	gameLoop();
-	alh.cleanUpAudio();
 
+	alh.cleanUpAudio();
+	
 	return 0;
 }

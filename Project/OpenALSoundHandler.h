@@ -79,6 +79,7 @@ void OpenALSoundHandler::playMusicBubbleShotted() {
 void OpenALSoundHandler::playMusicGameSucceeded() {
 
 	alSourcePlay(sourcesucceeded);
+
 }
 
 void OpenALSoundHandler::playMusicGameOver() {
