@@ -507,11 +507,8 @@ void idle() {
 
 						if (abs(dx) < d && abs(dy) < d) { // 충돌 발생
 							if (debugmode) cout << "적과 버블 충돌 발생\n";
-							auto mid = (center_b + center_e) / 2;
-							mid[2] = 0.0f;
 							e->setExState(Enemy::TRAPPED);
-							e->setCenter(mid);
-							bubbles[i].handleCollisionWEnemy(mid, e);
+							bubbles[i].handleCollisionWEnemy(center_e, e);
 						}
 					}
 				}
