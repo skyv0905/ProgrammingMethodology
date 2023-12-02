@@ -12,6 +12,7 @@
 #include "Stage.h"
 #include "Platform.h"
 #include "Texture.h"
+#include "Particle.h"
 #include "CollisionHandler.h"
 
 #include "Light.h"
@@ -37,6 +38,7 @@ LoadState load; // 로드 상태
 vector<Stage> stages;
 vector<Bubble> bubbles;
 vector<Texture> textures;
+vector<Particle> particles;
 
 OpenALSoundHandler alh;
 
@@ -259,8 +261,22 @@ void initialize() {
 	stages.push_back(end);
 }
 
-// Stage와 Player간의 collision handling
+// center위치에 좌우로 c개의 파티클을 생성
+void generateParticles(Vector3f centor, int c) {
+	for (auto i = 0; i < c; i++) {
+		Particle p(centor, 0);
+		Particle p1(centor, 1);
+		particles.push_back(p);
+		particles.push_back(p1);
+	}
+}
 
+// 스테이지 클리어 시 파티클 생성
+void generateStageClearParticles() {
+	generateParticles(player.getCenter(), 20);
+}
+
+// Stage와 Player간의 collision handling
 bool handleCollisionX(Player& player, Platform& platform) {
 
 	auto w = platform.getWidth();
@@ -433,6 +449,7 @@ void deleteWillDeletedBubbles() {
 	for (int i = bubbles.size(); i > 0; i--) {
 		if (bubbles[i - 1].isWillDeleted()) {
 			bubbles[i - 1].setTrappedEnemyDead();
+			generateParticles(bubbles[i - 1].getCenter(), 8);
 			alh.playMusicBubblePopped();
 			bubbles.erase(bubbles.begin() + i - 1);
 			if (debugmode) cout << i - 1 << "번째 버블 삭제" << endl;
@@ -605,6 +622,7 @@ void idle() {
 				stages[nextStage - 1].startSecondTransition(); // 이전 화면 전환 효과
 				stages[nextStage].startFirstTransition(); // 다음 화면 전환 효과
 				load = LOAD_STAGE; // 로드 상태 설정
+				generateStageClearParticles(); // 파티클 출력
 			}
 		}
 
@@ -660,6 +678,18 @@ void idle() {
 		}
 		if (player.isInvincible()) {
 			player.mInvincible();
+		}
+
+		for (auto& particle : particles) {
+			particle.move();
+		}
+
+		// PARTICLE 제거
+		for (int i = particles.size(); i > 0; i--) {
+			if (particles[i - 1].valid == 0) {
+				particles.erase(particles.begin() + i - 1);
+				if (debugmode) cout << i - 1 << "번째 파티클 삭제됨\n";
+			}
 		}
 		/* ▲ 위는 로드 상태와 상관없이 실행됨 ▲ */
 
@@ -738,6 +768,10 @@ void display() {
 		glDisable(light.getID());
 		glDisable(GL_LIGHTING);
 		glDisable(GL_DEPTH_TEST);
+
+		for (auto& particle : particles) {
+			particle.draw();
+		}
 
 		for (auto& e : stages[static_cast<int>(state)].getStageEnemy()) {
 			e->draw();
@@ -829,6 +863,9 @@ void keyboardDown(unsigned char key, int x, int y) {
 				}
 			}
 			break;
+		case 'A':
+		case 'a':
+			generateParticles(player.getCenter(), 4);
 		}
 	}
 }
