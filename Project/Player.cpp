@@ -90,6 +90,14 @@ float Player::getSize() const{
 	return size;
 }
 
+// 최대 낙하 속력 조절
+void Player::adjustVelocity() {
+	if (velocity[1] <= -20) {
+		velocity[1] = -20.0f;
+		acceleration[1] = 0.0f;
+	}
+}
+
 //Player가 바라보는 방향을 enum FACE를 type으로 한 값으로 설정하는 함수
 void Player::setFace(FACE f) {
 
@@ -243,6 +251,7 @@ void Player::moveY() {
 	velocity[1] = velocity[1] + acceleration[1];
 	center[1] = center[1] + velocity[1];
 	toInside();
+	adjustVelocity();
 	return;
 }
 

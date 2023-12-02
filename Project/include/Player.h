@@ -24,6 +24,7 @@ public:
 	Vector3f getVelocity() const;
 	void setAcceleration(Vector3f accel);
 	float getSize() const;
+	void adjustVelocity();
 
 	void setFace(FACE f);
 	void setHorizontalState(HORIZONTAL_STATE hState);
