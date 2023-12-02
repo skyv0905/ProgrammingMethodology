@@ -315,7 +315,12 @@ void Player::draw() const {
 
 	glEnable(GL_TEXTURE_2D); // 텍스쳐작업
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-	glBindTexture(GL_TEXTURE_2D, textures[7].getTextureID());
+	if (isJumping()) {
+		glBindTexture(GL_TEXTURE_2D, textures[14].getTextureID());
+	}
+	else {
+		glBindTexture(GL_TEXTURE_2D, textures[7].getTextureID());
+	}
 
 	auto f = face == LEFT ? 1 : -1;
 	drawTexture(f);

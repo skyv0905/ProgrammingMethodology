@@ -110,6 +110,11 @@ void initialize() {
 		textures.push_back(image);
 	}
 
+	// JUMP 이미지 로딩 14
+	Texture jumpimage;
+	jumpimage.initializeTexture("resources/Jump.png");
+	textures.push_back(jumpimage);
+
 	// MAIN
 	Stage main(0);
 	stages.push_back(main);
@@ -391,17 +396,17 @@ void bubbleCollisionHandler(int i) {
 				willdelete = true;
 			}
 
-			if (c2[1] + r2 > boundaryY && bubbleChainCollisionDetector(c1, c2 + Vector3f(0.0f, -WINDOW_HEIGHT, 0.0f), r1, r2)) { // 경계를 넘어선 버블에 대한
+			if (c2[1] + r2 >= boundaryY && bubbleChainCollisionDetector(c1, c2 + Vector3f(0.0f, -WINDOW_HEIGHT, 0.0f), r1, r2)) { // 경계를 넘어선 버블에 대한
 				willdelete = true;
 			}
-			else if (c2[1] - r2 < -boundaryY && bubbleChainCollisionDetector(c1, c2 + Vector3f(0.0f, WINDOW_HEIGHT, 0.0f), r1, r2)) {
+			else if (c2[1] - r2 <= -boundaryY && bubbleChainCollisionDetector(c1, c2 + Vector3f(0.0f, WINDOW_HEIGHT, 0.0f), r1, r2)) {
 				willdelete = true;
 			}
 
-			if (c2[0] + r2 > boundaryX && bubbleChainCollisionDetector(c1, c2 + Vector3f(-WINDOW_WIDTH, 0.0f, 0.0f), r1, r2)) {
+			if (c2[0] + r2 >= boundaryX && bubbleChainCollisionDetector(c1, c2 + Vector3f(-WINDOW_WIDTH, 0.0f, 0.0f), r1, r2)) {
 				willdelete = true;
 			}
-			else if (c2[0] - r2 < -boundaryX && bubbleChainCollisionDetector(c1, c2 + Vector3f(WINDOW_WIDTH, 0.0f, 0.0f), r1, r2)) {
+			else if (c2[0] - r2 <= -boundaryX && bubbleChainCollisionDetector(c1, c2 + Vector3f(WINDOW_WIDTH, 0.0f, 0.0f), r1, r2)) {
 				willdelete = true;
 			}
 
@@ -905,6 +910,13 @@ void gameLoop() {
 	glutInitWindowPosition(WINDOW_X, WINDOW_Y);
 	glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 	glutCreateWindow("Bubble Bobble");
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(-boundaryX, boundaryX, -boundaryY, boundaryY, -500.0, 500.0);
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 
 	initialize();
 
