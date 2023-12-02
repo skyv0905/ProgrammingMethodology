@@ -250,9 +250,9 @@ void initialize() {
 	player.setExState(Player::FORCEMOVING);
 
 	// light 초기 설정
-	light.setAmbient(0.5f, 0.5f, 0.5f, 1.0f);
-	light.setDiffuse(0.7f, 0.7f, 0.7f, 1.0f);
-	light.setSpecular(1.0f, 1.0f, 1.0f, 1.0f);
+	light.setAmbient(0.7f, 0.7f, 0.7f, 1.0f);
+	light.setDiffuse(1.0f, 1.0f, 1.0f, 1.0f);
+	light.setSpecular(0.7f, 0.7f, 0.7f, 1.0f);
 	
 	//GAME OVER state에서의 stage
 	Stage end(0);

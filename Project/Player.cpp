@@ -189,13 +189,15 @@ Bubble Player::shootBubble() {
 	Material m;
 	std::random_device rd;
 	std::mt19937 gen(rd());
-	std::uniform_real_distribution<float> r(0.5f, 1.0f);
+	std::uniform_real_distribution<float> r(0.5f, 0.8f);
 
-	m.setEmission(0.1f, 0.1f, 0.1f, 1.0f);
-	m.setAmbient(r(gen), r(gen), r(gen), 1.0f);
-	m.setDiffuse(0.7f, 0.7f, 0.7f, 1.0f);
-	m.setSpecular(1.0f, 1.0f, 1.0f, 0.8f);
-	m.setShininess(10.0f);
+	m.setEmission(0.0f, 0.0f, 0.5f, 0.8f);
+	m.setAmbient(0.2f, 0.2f, 0.2f, 1.0f);
+	m.setAmbient(r(gen), r(gen), r(gen) + 0.2f, 1.0f);
+	m.setDiffuse(r(gen), r(gen), r(gen) + 0.2f, 1.0f);
+	m.setSpecular(0.3f, 0.3f, 0.3f, 1.0f);
+	m.setSpecular(r(gen), r(gen), r(gen) + 0.2f, 1.0f);
+	m.setShininess(20.0f);
 
 	bub.setMTL(m);
 	
