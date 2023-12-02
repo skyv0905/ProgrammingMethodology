@@ -96,11 +96,11 @@ void Stage::draw() {
 
 void Stage::move() { // 화면 전환 관리
 
-	if (firstTransition) {
+	if (firstTransition < 0) {
 		firstTransition += (WINDOW_HEIGHT / 50); // 전환 속도
 	}
 	
-	if (secondTransition) {
+	if (secondTransition < 0) {
 		secondTransition += (WINDOW_HEIGHT / 50); // 전환 속도
 	}
 

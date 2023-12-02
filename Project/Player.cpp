@@ -210,6 +210,7 @@ bool Player::moveFinished() const { // return moveTice == 0
 }
 
 void Player::moveTo(Vector3f dst, float tick) { // Vector3f를 받아서 tick프레임 안에 그 위치로 플레이어를 이동하게 velocity 설정
+	setVerticalState(FALL);
 	Vector3f new_velocity;
 	moveTick = tick;
 	for (auto i = 0; i < 3; i++) {
@@ -258,15 +259,14 @@ void Player::toInside() {
 	}
 
 	if (center[1] > boundaryY) {
-		center[1] = center[1] + WINDOW_HEIGHT;
+		center[1] = center[1] - WINDOW_HEIGHT;
 	}
 }
 
 //Player를 그리는 함수. 왼쪽을 바라볼 때와 오른쪽을 바라볼 때 서로 다른 이미지로 mapping해야 함.
 
 void Player::draw() const {
-
-	glColor3f(1.0f, 1.0f, 1.0f);
+	glColor3f(1.0f, 1.0f, 1.0f); // 플레이어 히트박스 표시. 디버깅 용도
 	glBegin(GL_LINE_LOOP);
 	glVertex2f(center[0] - (size / 2), center[1] - size / 2);
 	glVertex2f(center[0] - (size / 2), center[1] + size / 2);

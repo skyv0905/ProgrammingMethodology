@@ -32,6 +32,9 @@ clock_t fps;
 string NAME = "BubbleBobble!";
 string string1 = "Press Space Bar to Start";
 
+enum class StageState { BEGIN = 0, STAGE1, STAGE2 };
+enum LoadState { NONE, LOAD_STAGE, LOAD_PLAYER, LOAD_ENEMY };
+
 StageState state; // 스테이지 상태
 LoadState load; // 로드 상태
 
@@ -47,7 +50,10 @@ bool bPressRight;
 bool bPressUp;
 bool bPressDown;
 
+bool fpsShow;
 bool PlayerIsOnPlatform;
+
+bool debugmode = true; // 디버깅모드
 
 // Blinking
 bool blinking;
@@ -297,6 +303,13 @@ int playerrenderwithblink() {
 }
 
 void initialize() {
+	// bool init
+	bPressLeft = false;
+	bPressRight = false;
+	bPressUp = false;
+	bPressDown = false;
+	fpsShow = false;
+	PlayerIsOnPlatform = false;
 
 	// 메인화면 이미지 로딩 0
 	Texture mainImage;
@@ -350,9 +363,10 @@ void initialize() {
 	platformInfo.push_back("■■                                                ■■");
 	platformInfo.push_back("■■                                                ■■");
 	platformInfo.push_back("■■                                                ■■");
-	platformInfo.push_back("■■            ■■                ▣▣            ■■");
-	platformInfo.push_back("                    ■            ▣                    ");
-	platformInfo.push_back("                      ■        ▣                      ");
+	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("                                                        ");
+	platformInfo.push_back("                                                        ");
+	platformInfo.push_back("                                                        ");
 	platformInfo.push_back("                                                        ");
 	platformInfo.push_back("                            ◆                          ");
 	platformInfo.push_back("■■▣▣      ▣▣▣▣▣▣▣▣▣▣▣▣▣▣      ▣▣■■");
@@ -384,7 +398,45 @@ void initialize() {
 	stages.push_back(stage1);
 	platformInfo.clear();
 
-	state = BEGIN;
+	// STAGE 2
+	// Platform 생성
+	Stage stage2(2);
+	stage2.setStagePlatformTextureID(textures[2].getTextureID(), textures[5].getTextureID(), textures[3].getTextureID());
+	platformInfo.push_back("■■■■■■■■■■■            ■■■■■■■■■■■");
+	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■            ■■■■■■■■■■■■            ■■");
+	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■▣▣      ▣▣▣▣▣        ▣▣▣▣▣      ▣▣■■");
+	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■▣▣▣▣▣▣      ▣▣▣▣▣▣      ▣▣▣▣▣▣■■");
+	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■                                          ▲    ■■");
+	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■■■■■■■■■■            ■■■■■■■■■■■");
+
+	stage2.setStagePlatform(platformInfo);
+	stages.push_back(stage2);
+	platformInfo.clear();
+
+	// 게임 STATE init
+	state = StageState::BEGIN;
 	load = NONE;
 
 	//Player의 초기 State setting
@@ -403,11 +455,6 @@ void initialize() {
 }
 
 // Stage와 Player간의 collision handling
-
-template <typename T>
-T abs(T num) { // 절댓값 반환
-	return num >= 0 ? num : -num;
-}
 
 bool handleCollisionX(Player& player, Platform& platform) {
 
@@ -439,13 +486,13 @@ bool handleCollisionX(Player& player, Platform& platform) {
 
 		switch (side) {
 		case 0:
-			cout << "플레이어 충돌 발생 (왼쪽)" << endl;
+			if (debugmode) cout << "플레이어 충돌 발생 (왼쪽)" << endl;
 			new_center[0] = ltrb_pf[2] + PLAYER_SIZE / 2; // 플랫폼 오른쪽 좌표 + (플레이어 사이즈 / 2)
 			player.setCenter(new_center);
 			player.setHorizontalState(Player::STOPH);
 			break;
 		case 2:
-			cout << "플레이어 충돌 발생 (오른쪽)" << endl;
+			if (debugmode) cout << "플레이어 충돌 발생 (오른쪽)" << endl;
 			new_center[0] = ltrb_pf[0] - PLAYER_SIZE / 2; // 플랫폼 왼쪽 좌표 - (플레이어 사이즈 / 2)
 			player.setCenter(new_center);
 			player.setHorizontalState(Player::STOPH);
@@ -484,13 +531,13 @@ void handleCollisionY(Player& player, Platform& platform, int collisionDetectedX
 		switch (side) {
 		case 1:
 			if (platform.getPlatformType() == Platform::PLATFORM::MIDDLE) break;
-			cout << "플레이어 충돌 발생 (위쪽)" << endl;
+			if (debugmode) cout << "플레이어 충돌 발생 (위쪽)" << endl;
 			new_center[1] = ltrb_pf[3] - PLAYER_SIZE / 2; // 플랫폼 아래쪽 좌표 - (플레이어 사이즈 / 2)
 			player.setCenter(new_center);
 			break;
 		case 3:
 			if (player.getVelocity()[1] > 0 || collisionDetectedX) break;
-			cout << "플레이어 충돌 발생 (아래쪽)" << endl;
+			if (debugmode) cout << "플레이어 충돌 발생 (아래쪽)" << endl;
 			new_center[1] = ltrb_pf[1] + PLAYER_SIZE / 2; // 플랫폼 위쪽 좌표 + (플레이어 사이즈 / 2)
 			player.setCenter(new_center);
 			PlayerIsOnPlatform = true;
@@ -548,9 +595,13 @@ void deleteWillDeletedBubbles() { // DELETED 체크된 버블 모두 Vector에�
 		if (bubbles[i - 1].isWillDeleted()) {
 			playMusicBubblePopped();
 			bubbles.erase(bubbles.begin() + i - 1);
-			cout << i - 1 << "번째 버블 삭제" << endl;
+			if (debugmode) cout << i - 1 << "번째 버블 삭제" << endl;
 		}
 	}
+}
+
+void deleteAllBubbles() { // 모든 버블 제거
+	bubbles.clear();
 }
 
 void idle() {
@@ -558,7 +609,7 @@ void idle() {
 	end_t = clock();
 
 	if ((float)(end_t - start_t) > 1000 / 30.0f) { // 프레임 제어
-		if (state == BEGIN) return; // IDLE함수는 state가 begin이면 아래를 실행하지 않음.
+		if (state == StageState::BEGIN) return; // IDLE함수는 state가 begin이면 아래를 실행하지 않음.
 
 		/* ▼ 아래는 로드 중일때는 실행되지 않음 ▼ */
 
@@ -619,17 +670,16 @@ void idle() {
 			if (player.isMoving()) {
 				player.moveX(); // 플레이어 X이동
 			}
-			for (auto& platform : stages[state].getStagePlatform()) { // X충돌감지
+			for (auto& platform : stages[static_cast<int>(state)].getStagePlatform()) { // X충돌감지
 				collisionDetectedX += handleCollisionX(player, platform);
 			}
 			if (player.isJumping() || player.isFalling()) { // Y충돌감지
 				player.moveY(); // 플레이어Y 이동
-				for (auto& platform : stages[state].getStagePlatform()) {
+				for (auto& platform : stages[static_cast<int>(state)].getStagePlatform()) {
 					handleCollisionY(player, platform, collisionDetectedX);
 				}
 			}
-
-			for (auto& platform : stages[state].getStagePlatform()) {
+			for (auto& platform : stages[static_cast<int>(state)].getStagePlatform()) {
 				// 플랫폼 - 버블간 충돌
 
 				if (platform.getPlatformType() != Platform::PLATFORM::MIDDLE) {
@@ -645,7 +695,7 @@ void idle() {
 						float dy = center_p[1] - center_b[1];
 
 						if (abs(dx) < d && abs(dy) < d) { // 충돌 발생
-							cout << i << "번째 플랫폼에 버블 충돌 발생" << endl;
+							if (debugmode) cout << i << "번째 플랫폼에 버블 충돌 발생" << endl;
 							bubble.handleCollision(center_p, platform.getWidth() / 2);
 						}
 					}
@@ -685,11 +735,12 @@ void idle() {
 
 		// 스테이지 전환
 		if (load == LOAD_STAGE) {
-			stages[state].move();
+			stages[static_cast<int>(state) - 1].move();
+			stages[static_cast<int>(state)].move();
 
-			if (stages[state].getFirstTransition() == 0) { // 로드 상태
+			if (stages[static_cast<int>(state)].getFirstTransition() == 0) { // 로드 상태
 				load = LOAD_PLAYER;
-				player.moveTo(stages[state].getPlayerOrigin(), 20.0f);
+				player.moveTo(stages[static_cast<int>(state)].getPlayerOrigin(), 20.0f);
 			}
 		}
 
@@ -764,7 +815,7 @@ void display() {
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	if (state == BEGIN) {
+	if (state == StageState::BEGIN) {
 
 		glEnable(GL_TEXTURE_2D);
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
@@ -783,7 +834,6 @@ void display() {
 			glutBitmapCharacter(GLUT_BITMAP_9_BY_15, string1[i]);
 		glPopMatrix();
 	}
-
 	else if (state != BEGIN) {
 
 		if (state == OVER) {
@@ -799,15 +849,19 @@ void display() {
 			glEnd();
 			glDisable(GL_TEXTURE_2D);
 		}
+	}
+	else if (state != StageState::BEGIN) {
+		glPushMatrix(); // 화면 전환 효과
+		if (stages[static_cast<int>(state)].getFirstTransition()) glTranslatef(0, stages[static_cast<int>(state)].getFirstTransition(), 0); // 새로운 화면
+		stages[static_cast<int>(state)].draw();
+		glPopMatrix();
 
-		else {
-
-			glPushMatrix(); // 화면 전환 효과
-			if (stages[state].getFirstTransition()) glTranslatef(0, stages[state].getFirstTransition(), 0);
-			if (stages[state].getSecondTransition()) glTranslatef(0, stages[state].getSecondTransition() + WINDOW_HEIGHT, 0); // 화면 전환 끝
-
-			stages[state].draw();
+		if (stages[static_cast<int>(state) - 1].getSecondTransition()) {
+			glPushMatrix();
+			glTranslatef(0, stages[static_cast<int>(state) - 1].getSecondTransition() + WINDOW_HEIGHT, 0);  // 이전 화면
+			stages[static_cast<int>(state) - 1].draw();
 			glPopMatrix();
+		} // 화면 전환 효과 끝
 
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -841,17 +895,18 @@ void display() {
 	glDisable(GL_LIGHTING);
 	glDisable(GL_DEPTH_TEST);
 
-	glPushMatrix(); // 프레임 업데이트 시간 확인
-	glRasterPos2f(-boundaryX + PLAYER_SIZE, boundaryY - PLAYER_SIZE);
-	string string_fps = "FPS: " + to_string(fps) + "ms";
-	glColor3f(1.0f, 1.0f, 1.0f);
-	for (int i = 0; i < string_fps.size(); i++)
-		glutBitmapCharacter(GLUT_BITMAP_9_BY_15, string_fps[i]);
-	glPopMatrix();
+	if (fpsShow) {
+		glPushMatrix(); // 프레임 업데이트 시간 확인
+		glRasterPos2f(-boundaryX + PLAYER_SIZE, boundaryY - PLAYER_SIZE);
+		string string_fps = "FPS: " + to_string(fps) + "ms";
+		glColor3f(1.0f, 1.0f, 1.0f);
+		for (int i = 0; i < string_fps.size(); i++)
+			glutBitmapCharacter(GLUT_BITMAP_9_BY_15, string_fps[i]);
+		glPopMatrix();
+	}
 
 	glutSwapBuffers();
 }
-
 
 void keyboardDown(unsigned char key, int x, int y) {
 
@@ -859,13 +914,13 @@ void keyboardDown(unsigned char key, int x, int y) {
 
 	if (key == 32) {
 
-		if (state == BEGIN) {
-			state = STAGE1;
-			stages[state].startFirstTransition();
+		if (state == StageState::BEGIN) {
+			state = StageState::STAGE1;
+			stages[static_cast<int>(state)].startFirstTransition();
 			load = LOAD_STAGE;
 		}
 
-		else if (state == STAGE1) {
+		else if (state != StageState::BEGIN) {
 			if (player.canShootBubble() && load == NONE) {
 				bubbles.push_back(player.shootBubble());
 			}
@@ -873,23 +928,50 @@ void keyboardDown(unsigned char key, int x, int y) {
 	}
 
 	/* 이 아래는 디버깅을 위한 코드입니다 */
-	switch (key)
-	{
-	case 'v':
+	if (debugmode) {
+		switch (key)
+		{
+		case 'V':
+		case 'v':
 		{
 			Vector3f v = player.getVelocity();
 			cout << "현재 플레이어의 속도: " << v[0] << ", " << v[1] << ", " << v[2] << endl;
 			break;
 		}
-	case 'c':
+		case 'C':
+		case 'c':
 		{
 			Vector3f c = player.getCenter();
 			cout << "현재 플레이어의 중심: " << c[0] << ", " << c[1] << ", " << c[2] << endl;
 			break;
 		}
-	case 'p':
-		player.printState();
-		break;
+		case 'P':
+		case 'p':
+			player.printState();
+			break;
+		case 'F': // fps 표시
+		case 'f':
+			fpsShow = !fpsShow;
+			break;
+		case 'N': // 강제로 다음 스테이지로 전환
+		case 'n':
+			if (state != StageState::BEGIN) {
+				auto nextStage = static_cast<int>(state) + 1;
+				if (nextStage >= stages.size()) {
+					cout << "마지막 스테이지" << endl;
+					break;
+				}
+				else {
+					cout << "스테이지 " << nextStage << "로 이동" << endl;
+					deleteAllBubbles(); // 모든 버블 제거
+					state = static_cast<StageState>(nextStage); // 스테이지 + 1
+					stages[nextStage - 1].startSecondTransition(); // 이전 화면 전환 효과
+					stages[nextStage].startFirstTransition(); // 다음 화면 전환 효과
+					load = LOAD_STAGE; // 로드 상태 설정
+				}
+			}
+			break;
+		}
 	}
 }
 

@@ -15,6 +15,7 @@ public:
 		platform_texture_type3 = 1;
 		firstTransition = 0;
 		secondTransition = 0;
+		player_origin.setPos(0.0f, 0.0f, 0.0f);
 	};
 
 	void setStagePlatformTextureID(GLuint a, GLuint b, GLuint c); // 플랫폼에 넣을 텍스쳐의 ID 설정

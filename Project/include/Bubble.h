@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "Material.h"
+#include "Constants.h"
 
 class Bubble {
 public:
@@ -28,6 +29,7 @@ public:
 
 	void handleCollision(Vector3f center, float x);
 	void move();
+	void toInside();
 	void draw() const;
 
 private:

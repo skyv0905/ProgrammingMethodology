@@ -113,6 +113,25 @@ void Bubble::move() {
 		}
 	}
 	center = center + velocity;
+	toInside();
+}
+
+void Bubble::toInside() {
+	if (center[0] < -boundaryX) {
+		center[0] = center[0] + WINDOW_WIDTH;
+	}
+
+	if (center[0] > boundaryX) {
+		center[0] = center[0] - WINDOW_WIDTH;
+	}
+
+	if (center[1] < -boundaryY) {
+		center[1] = center[1] + WINDOW_HEIGHT;
+	}
+
+	if (center[1] > boundaryY) {
+		center[1] = center[1] - WINDOW_HEIGHT;
+	}
 }
 
 void Bubble::draw() const {
