@@ -5,10 +5,8 @@
 
 #include <vector>
 
-extern std::vector<Bubble>bubbles;
 extern std::vector<Texture> textures;
-extern bool bPressLeft;
-extern bool bPressRight;
+extern int globalTimeCount;
 
 //Player 생성자. 기본값으로는 왼쪽을 보고 있으며, 멈추어있는 상태.
 Player::Player(float x, float y, float z, float size) {
@@ -319,7 +317,17 @@ void Player::draw() const {
 		glBindTexture(GL_TEXTURE_2D, textures[14].getTextureID());
 	}
 	else {
-		glBindTexture(GL_TEXTURE_2D, textures[7].getTextureID());
+		if (isMoving()) {
+			if ((globalTimeCount / 4) % 2 == 0) {
+				glBindTexture(GL_TEXTURE_2D, textures[15].getTextureID());
+			}
+			else {
+				glBindTexture(GL_TEXTURE_2D, textures[16].getTextureID());
+			}
+		}
+		else {
+			glBindTexture(GL_TEXTURE_2D, textures[7].getTextureID());
+		}
 	}
 
 	auto f = face == LEFT ? 1 : -1;

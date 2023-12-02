@@ -115,6 +115,15 @@ void initialize() {
 	jumpimage.initializeTexture("resources/Jump.png");
 	textures.push_back(jumpimage);
 
+	// WALK 이미지 로딩 15, 16
+	Texture walk1;
+	walk1.initializeTexture("resources/Walk1.png");
+	textures.push_back(walk1);
+	Texture walk2;
+	walk2.initializeTexture("resources/walk2.png");
+	textures.push_back(walk2);
+
+
 	// MAIN
 	Stage main(0);
 	stages.push_back(main);
