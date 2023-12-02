@@ -427,17 +427,20 @@ void idle() {
 
 		if (load == NONE) {
 
-			colHandler(player, stages[static_cast<int>(state)].getStageEnemy());
-
 			if (alh.sourceStateBackground == AL_STOPPED) { alh.playMusicBackground(); }
 
-			if (player.getUnderAttack() && player.getExState() != Player::EX_STATE::COLLISION) {
-				
+			if (player.getExState() != Player::EX_STATE::COLLISION) {
+				colHandler(player, stages[static_cast<int>(state)].getStageEnemy());
+			}
+
+			if (player.getUnderAttack()) {
 				startBlink();
 				player.setExState(Player::EX_STATE::COLLISION);
+				player.setUnderAttack(false);
 
 				player.setLife(player.getLife() - 1);
-				cout << player.getLife(); lifes.pop_back();
+				cout << player.getLife();
+				lifes.pop_back();
 
 				if (lifes.size() == 0) {
 
