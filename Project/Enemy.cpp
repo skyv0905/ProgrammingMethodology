@@ -16,8 +16,8 @@ enum HORIZONTAL_STATE { STOPH, MOVE };
 enum VERTICAL_STATE { STOPV, FALL };
 
 Enemy::Enemy(float x, float y, float z, float size, FACE f)  {
-
-	center[0] = x; center[1] = y; center[2] = z;
+	origin[0] = x; origin[1] = y; origin[2] = z;
+	center[0] = x; center[1] = boundaryY + size; center[2] = z;
 	this->size = size;
 	face = f;
 	verticalState = FALL;
@@ -54,11 +54,11 @@ bool Enemy::moveFinished() const { // return moveTice == 0
 	return moveTick == 0;
 }
 
-void Enemy::moveTo(Vector3f dst, float tick) { // Vector3f를 받아서 tick프레임 안에 그 위치로 플레이어를 이동하게 velocity 설정
+void Enemy::moveTo(float tick) { // Vector3f를 받아서 tick프레임 안에 그 위치로 플레이어를 이동하게 velocity 설정
 	Vector3f new_velocity(velocity);
 	moveTick = tick;
 	for (auto i = 0; i < 3; i++) {
-		new_velocity[i] = (dst[i] - center[i]) / moveTick;
+		new_velocity[i] = (origin[i] - center[i]) / moveTick;
 	}
 	setVelocity(new_velocity);
 }
@@ -176,25 +176,27 @@ void Enemy::draw() const{
 	auto f = face == LEFT ? -1 : 1;
 	drawTexture(f);
 
-	glPushMatrix(); // 주어진 범위 이탈 시 자연스럽게 보이기 위한 더미 이미지
-	glTranslatef(-WINDOW_WIDTH, 0.0f, 0.0f);
-	drawTexture(f);
-	glPopMatrix();
+	if (moveFinished()) {
+		glPushMatrix(); // 주어진 범위 이탈 시 자연스럽게 보이기 위한 더미 이미지
+		glTranslatef(-WINDOW_WIDTH, 0.0f, 0.0f);
+		drawTexture(f);
+		glPopMatrix();
 
-	glPushMatrix();
-	glTranslatef(WINDOW_WIDTH, 0.0f, 0.0f);
-	drawTexture(f);
-	glPopMatrix();
+		glPushMatrix();
+		glTranslatef(WINDOW_WIDTH, 0.0f, 0.0f);
+		drawTexture(f);
+		glPopMatrix();
 
-	glPushMatrix();
-	glTranslatef(0.0f, -WINDOW_HEIGHT, 0.0f);
-	drawTexture(f);
-	glPopMatrix();
+		glPushMatrix();
+		glTranslatef(0.0f, -WINDOW_HEIGHT, 0.0f);
+		drawTexture(f);
+		glPopMatrix();
 
-	glPushMatrix();
-	glTranslatef(0.0f, WINDOW_HEIGHT, 0.0f);
-	drawTexture(f);
-	glPopMatrix();
+		glPushMatrix();
+		glTranslatef(0.0f, WINDOW_HEIGHT, 0.0f);
+		drawTexture(f);
+		glPopMatrix();
+	}
 
 	glDisable(GL_TEXTURE_2D);
 }

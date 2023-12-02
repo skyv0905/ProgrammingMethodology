@@ -15,11 +15,8 @@ void Stage::setStagePlatform(std::vector<std::string> info) {
 			if ((j % 2) != 0) continue;
 
 			if (info[i].substr(j, 2) == "■") { // 단단 플랫폼
-
-				if (j == 2) { Platform p(x, y, Platform::PLATFORM::LEFT, platform_texture_type1); platforms.push_back(p); }
-				else if (j == info[i].size() - 4) { Platform p(x, y, Platform::PLATFORM::RIGHT, platform_texture_type1); platforms.push_back(p); }
-				else if (i == 27) { Platform p(x, y, Platform::PLATFORM::BOTTOM, platform_texture_type1); platforms.push_back(p); }
-				else { Platform p(x, y, Platform::PLATFORM::NONE, platform_texture_type1); platforms.push_back(p); }
+				Platform p(x, y, Platform::PLATFORM::GROUND, platform_texture_type1);
+				platforms.push_back(p);
 			}
 
 			else if (info[i].substr(j, 2) == "▣") { // 중간 플랫폼
@@ -31,16 +28,16 @@ void Stage::setStagePlatform(std::vector<std::string> info) {
 				player_origin.setPos((x - 14) * PIXEL + (PLAYER_SIZE / 2.f), (y - 14) * PIXEL + (PLAYER_SIZE / 2.f), 0);
 			}
 
-			else if (info[i].substr(j, 2) == "◆") { 
-				enemy_origin1.setPos((x - 14) * PIXEL + (PLAYER_SIZE / 2.f), (y - 14) * PIXEL + (PLAYER_SIZE / 2.f), 0);
+			else if (info[i].substr(j, 2) == "◀") {
+				Enemy en((x - 14) * PIXEL + (PLAYER_SIZE / 2.f), (y - 14) * PIXEL + (PLAYER_SIZE / 2.f), 0, PLAYER_SIZE, Enemy::LEFT);
+				enemys.push_back(en);
+				enemy_count++;
 			}
 
-			else if (info[i].substr(j, 2) == "★") {
-				enemy_origin2.setPos((x - 14) * PIXEL + (PLAYER_SIZE / 2.f), (y - 14) * PIXEL + (PLAYER_SIZE / 2.f), 0);
-			}
-
-			else if (info[i].substr(j, 2) == "◎") {
-				enemy_origin3.setPos((x - 14) * PIXEL + (PLAYER_SIZE / 2.f), (y - 14) * PIXEL + (PLAYER_SIZE / 2.f), 0);
+			else if (info[i].substr(j, 2) == "▶") {
+				Enemy en((x - 14) * PIXEL + (PLAYER_SIZE / 2.f), (y - 14) * PIXEL + (PLAYER_SIZE / 2.f), 0, PLAYER_SIZE, Enemy::RIGHT);
+				enemys.push_back(en);
+				enemy_count++;
 			}
 
 			x += 1.0f;
@@ -53,6 +50,10 @@ void Stage::setStagePlatform(std::vector<std::string> info) {
 std::vector<Platform>& Stage::getStagePlatform() {
 
 	return platforms;
+}
+
+std::vector<Enemy>& Stage::getStageEnemy() {
+	return enemys;
 }
 
 float Stage::getFirstTransition() { // 화면 전환 관리
@@ -73,18 +74,6 @@ void Stage::startSecondTransition() {
 
 Vector3f Stage::getPlayerOrigin() {
 	return player_origin;
-}
-
-Vector3f Stage::getEnemyOrigin1() {
-	return enemy_origin1;
-}
-
-Vector3f Stage::getEnemyOrigin2() {
-	return enemy_origin2;
-}
-
-Vector3f Stage::getEnemyOrigin3() {
-	return enemy_origin3;
 }
 
 void Stage::draw() {

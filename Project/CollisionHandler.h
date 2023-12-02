@@ -5,5 +5,5 @@
 class CollisionHandler
 {
 public:
-	void operator()(Player& player, Enemy& enemy, Enemy& enemy1, Enemy& enemy2);
+	void operator()(Player& player, vector<Enemy>& enemys);
 };

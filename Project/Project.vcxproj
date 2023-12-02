@@ -183,6 +183,7 @@
     <ClInclude Include="include\Vector3f.h" />
     <ClInclude Include="include\Vector4f.h" />
     <ClInclude Include="Life.h" />
+    <ClInclude Include="OpenALSoundHandler.h" />
     <ClInclude Include="Platform.h" />
     <ClInclude Include="Stage.h" />
   </ItemGroup>

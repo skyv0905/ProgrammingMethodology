@@ -11,5 +11,5 @@ using namespace std;
 class CollisionDetector
 {
 public:
-	bool operator()(const Player& player, const Enemy& enemy, const Enemy& enemy1, const Enemy& enemy2);
+	bool operator()(const Player& player, const Enemy& e);
 };

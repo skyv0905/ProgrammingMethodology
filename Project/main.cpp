@@ -19,9 +19,8 @@
 #include "Enemy.h"
 #include "Life.h"
 
-#include <AL/al.h>
-#include <AL/alc.h>
-#include <GL/freeglut.h>
+#include "OpenALSoundHandler.h"
+#include "GL/freeglut.h"
 
 using namespace std;
 
@@ -39,6 +38,8 @@ vector<Stage> stages;
 vector<Bubble> bubbles;
 vector<Texture> textures;
 vector<Life> lifes;
+
+OpenALSoundHandler alh;
 
 // 키보드 입력 상태
 
@@ -58,194 +59,9 @@ clock_t blinkStartTime;
 
 Player player(0, 0, 0.0f, PLAYER_SIZE);
 
-Enemy enemy1(0, 0, 0.0f, PLAYER_SIZE, Enemy::LEFT);
-Enemy enemy2(0, 0, 0.0f, PLAYER_SIZE, Enemy::RIGHT);
-Enemy enemy3(0, 0, 0.0f, PLAYER_SIZE, Enemy::LEFT);
-
 Light light(boundaryX, boundaryY, boundaryX / 2, GL_LIGHT0);
 
 CollisionHandler colHandler;
-
-/*-----------------------------------------------------Variables For Playing Music----------------------------------------------------------*/
-
-// OpenAL 초기화
-ALCdevice* device;
-ALCcontext* context;
-
-// Wav 파일 로드하여 AudioData 저장하에 필요한 변수들
-std::vector<char> audioDataBackground;
-std::vector<char> audioDataBubblePopped;
-std::vector<char> audioDataBubbleShotted;
-std::vector<char> audioDataGameSucceeded;
-std::vector<char> audioDataGameOver;
-
-ALsizei sizebackground, frequencybackground;
-ALsizei sizepopped, frequencypopped;
-ALsizei sizeshotted, frequencyshotted;
-ALsizei sizesucceeded, frequencysucceeded;
-ALsizei sizeover, frequencyover;
-
-ALenum formatbackground;
-ALenum formatpopped;
-ALenum formatshotted;
-ALenum formatsucceeded;
-ALenum formatover;
-
-// 각 Wav 파일의 재생 상태 확인하는 변수들
-ALint sourceStateBackground;
-ALint sourceStatePopped;
-ALint sourceStateShotted;
-ALint sourceStateSucceeded;
-ALint sourceStateOver;
-
-// 각 Wav 파일의 재생을 위한 buffer와 source 변수들
-ALuint bufferbackground, sourcebackground;
-ALuint buffershotted, sourceshotted;
-ALuint buffersucceeded, sourcesucceeded;
-ALuint bufferover, sourceover;
-ALuint bufferpopped, sourcepopped;
-
-/*----------------------------------------Functions for Playing Music--------------------------------------------*/
-
-void playMusicBackground();
-void playMusicBubblePopped();
-void playMusicBubbleShotted();
-void playMusicGameSucceeded();
-void playMusicGameOver();
-
-void loadWavFile(const std::string& filename, std::vector<char>& buffer, ALsizei* size, ALsizei* frequency, ALenum* format) {
-
-	std::ifstream file(filename, std::ios::binary);
-	if (!file.is_open()) {
-		throw std::runtime_error("Failed to open file");
-	}
-
-	char fileHeader[44];
-	file.read(fileHeader, 44);
-
-	if (std::strncmp(fileHeader, "RIFF", 4) != 0 || std::strncmp(fileHeader + 8, "WAVE", 4) != 0) {
-		throw std::runtime_error("Not a valid WAV file");
-	}
-
-	*frequency = *(int*)(fileHeader + 24);
-	int bitsPerSample = *(short*)(fileHeader + 34);
-	int channels = *(short*)(fileHeader + 22);
-
-	*format = (channels == 2) ? AL_FORMAT_STEREO16 : AL_FORMAT_MONO16;
-
-	*size = *(int*)(fileHeader + 40);
-	buffer.resize(*size);
-	file.read(buffer.data(), *size);
-
-	file.close();
-}
-
-void setUpAudio() {
-
-	/*------------------------- OpenAL 초기화 ---------------------------*/
-
-	device = alcOpenDevice(NULL); // 기본 오디오 장치 열기
-
-	if (!device) {
-		std::cerr << "Unable to open default device" << std::endl;
-	}
-
-	context = alcCreateContext(device, NULL);
-
-	if (!context) {
-		std::cerr << "Unable to create context" << std::endl;
-		alcCloseDevice(device);
-	}
-
-	alcMakeContextCurrent(context);
-
-	/*------------------------- 오디오 데이터 로드 ---------------------------*/
-
-	loadWavFile("Background.wav", audioDataBackground, &sizebackground, &frequencybackground, &formatbackground);
-	loadWavFile("Bubble_Popped.wav", audioDataBubblePopped, &sizepopped, &frequencypopped, &formatpopped);
-	loadWavFile("Bubble_Shotted.wav", audioDataBubbleShotted, &sizeshotted, &frequencyshotted, &formatshotted);
-	loadWavFile("Game_Succeeded.wav", audioDataGameSucceeded, &sizesucceeded, &frequencysucceeded, &formatsucceeded);
-	loadWavFile("Game_Over.wav", audioDataGameOver, &sizeover, &frequencyover, &formatover);
-
-	// 버퍼 생성
-	alGenBuffers(1, &bufferbackground);
-	alGenBuffers(1, &bufferpopped);
-	alGenBuffers(1, &buffershotted);
-	alGenBuffers(1, &buffersucceeded);
-	alGenBuffers(1, &bufferover);
-
-	// 소스 생성
-	alGenSources(1, &sourcebackground);
-	alGenSources(1, &sourcepopped);
-	alGenSources(1, &sourceshotted);
-	alGenSources(1, &sourcesucceeded);
-	alGenSources(1, &sourceover);
-
-	// 소스에 버퍼 연결
-
-	alBufferData(bufferbackground, formatbackground, audioDataBackground.data(), sizebackground, frequencybackground);
-	alSourcei(sourcebackground, AL_BUFFER, bufferbackground);
-
-	alBufferData(bufferpopped, formatpopped, audioDataBubblePopped.data(), sizepopped, frequencypopped);
-	alSourcei(sourcepopped, AL_BUFFER, bufferpopped);
-
-	alBufferData(buffershotted, formatshotted, audioDataBubbleShotted.data(), sizeshotted, frequencyshotted);
-	alSourcei(sourceshotted, AL_BUFFER, buffershotted);
-
-	alBufferData(buffersucceeded, formatsucceeded, audioDataGameSucceeded.data(), sizesucceeded, frequencysucceeded);
-	alSourcei(sourcesucceeded, AL_BUFFER, buffersucceeded);
-
-	alBufferData(bufferover, formatover, audioDataGameOver.data(), sizeover, frequencyover);
-	alSourcei(sourceover, AL_BUFFER, bufferover);
-}
-
-void playMusicBubblePopped() {
-
-	alSourcePlay(sourcepopped);
-}
-
-void playMusicBubbleShotted() {
-
-	alSourcePlay(sourceshotted);
-}
-
-void playMusicGameSucceeded() {
-
-	alSourcePlay(sourcesucceeded);
-}
-
-void playMusicGameOver() {
-
-	alSourcePlay(sourceover);
-}
-
-void playMusicBackground() {
-
-	alSourcePlay(sourcebackground);
-}
-
-void cleanUpAudio() {
-
-	alDeleteSources(1, &sourcebackground);
-	alDeleteBuffers(1, &bufferbackground);
-
-	alDeleteSources(1, &sourceover);
-	alDeleteBuffers(1, &bufferover);
-
-	alDeleteSources(1, &sourceshotted);
-	alDeleteBuffers(1, &buffershotted);
-
-	alDeleteSources(1, &sourcepopped);
-	alDeleteBuffers(1, &bufferpopped);
-
-	alDeleteSources(1, &sourcesucceeded);
-	alDeleteBuffers(1, &buffersucceeded);
-
-	alcDestroyContext(context);
-	alcCloseDevice(device);
-}
-
-/*--------------------------------------------------------------------------------------------------------------------------------------*/
 
 long long getCurrentTime() {
 
@@ -364,17 +180,17 @@ void initialize() {
 	platformInfo.push_back("                                                        ");
 	platformInfo.push_back("                                                        ");
 	platformInfo.push_back("                                                        ");
-	platformInfo.push_back("                            ◆                          ");
+	platformInfo.push_back("                            ◀                          ");
 	platformInfo.push_back("■■▣▣      ▣▣▣▣▣▣▣▣▣▣▣▣▣▣      ▣▣■■");
 	platformInfo.push_back("■■                                                ■■");
 	platformInfo.push_back("■■                                                ■■");
 	platformInfo.push_back("■■                                                ■■");
-	platformInfo.push_back("■■                        ★                      ■■");
+	platformInfo.push_back("■■                        ▶                      ■■");
 	platformInfo.push_back("■■▣▣      ▣▣▣▣▣▣▣▣▣▣▣▣▣▣      ▣▣■■");
 	platformInfo.push_back("■■                                                ■■");
 	platformInfo.push_back("■■                                                ■■");
 	platformInfo.push_back("■■                                                ■■");
-	platformInfo.push_back("■■                        ◎                      ■■");
+	platformInfo.push_back("■■                        ◀                      ■■");
 	platformInfo.push_back("■■▣▣      ▣▣▣▣▣▣▣▣▣▣▣▣▣▣      ▣▣■■");
 	platformInfo.push_back("■■                                                ■■");
 	platformInfo.push_back("■■                                                ■■");
@@ -589,7 +405,7 @@ void bubbleCollisionHandler(int i) { // 버블 충돌 시 연결된 모든 버�
 void deleteWillDeletedBubbles() { // DELETED 체크된 버블 모두 Vector에서 제거
 	for (int i = bubbles.size(); i > 0; i--) {
 		if (bubbles[i - 1].isWillDeleted()) {
-			playMusicBubblePopped();
+			alh.playMusicBubblePopped();
 			bubbles.erase(bubbles.begin() + i - 1);
 			if (debugmode) cout << i - 1 << "번째 버블 삭제" << endl;
 		}
@@ -611,9 +427,9 @@ void idle() {
 
 		if (load == NONE) {
 
-			colHandler(player, enemy1, enemy2, enemy3);
+			colHandler(player, stages[static_cast<int>(state)].getStageEnemy());
 
-			if (sourceStateBackground == AL_STOPPED) { playMusicBackground(); }
+			if (alh.sourceStateBackground == AL_STOPPED) { alh.playMusicBackground(); }
 
 			if (player.getUnderAttack() && player.getExState() != Player::EX_STATE::COLLISION) {
 				
@@ -626,11 +442,11 @@ void idle() {
 				if (lifes.size() == 0) {
 
 					state = StageState::OVER;
-					playMusicGameOver();
+					alh.playMusicGameOver();
  
-					alSourceStop(sourcebackground);
-					alSourceStop(sourcepopped);
-					alSourceStop(sourceshotted);
+					alSourceStop(alh.sourcebackground);
+					alSourceStop(alh.sourcepopped);
+					alSourceStop(alh.sourceshotted);
 				}
 			}
 
@@ -717,14 +533,10 @@ void idle() {
 			}
 			else player.setHorizontalState(Player::STOPH);
 
-			enemy1.move();
-			enemy1.setFace(enemy1.getFace());
-
-			enemy2.move();
-			enemy2.setFace(enemy2.getFace());
-
-			enemy3.move();
-			enemy3.setFace(enemy3.getFace());
+			for (auto& e : stages[static_cast<int>(state)].getStageEnemy()) {
+				e.move();
+				e.setFace(e.getFace());
+			}
 		}
 
 		/* ▲ 위는 로드 중일때는 실행되지 않음 ▲ */
@@ -751,45 +563,25 @@ void idle() {
 
 				load = LoadState::LOAD_ENEMY;
 
-				enemy1.setVerticalState(Enemy::VERTICAL_STATE::FALL);
-				enemy1.moveTo(stages[static_cast<int>(state)].getEnemyOrigin1(), 20.0f);
-
-				enemy2.setVerticalState(Enemy::VERTICAL_STATE::FALL);
-				enemy2.moveTo(stages[static_cast<int>(state)].getEnemyOrigin2(), 20.0f);
-
-				enemy3.setVerticalState(Enemy::VERTICAL_STATE::FALL);
-				enemy3.moveTo(stages[static_cast<int>(state)].getEnemyOrigin3(), 20.0f);
+				for (auto& e : stages[static_cast<int>(state)].getStageEnemy()) {
+					e.setVerticalState(Enemy::VERTICAL_STATE::FALL);
+					e.moveTo(20.0f);
+				}
 			}
 		}
 
 		if (load == LOAD_ENEMY) { // 적 로드
 
-			enemy1.move();
-			enemy1.mMoveTick();
+			for (auto& e : stages[static_cast<int>(state)].getStageEnemy()) {
+				e.move();
+				e.mMoveTick();
 
-			enemy2.move();
-			enemy2.mMoveTick();
+				if (e.moveFinished()) {
+					load = LoadState::NONE;
 
-			enemy3.move();
-			enemy3.mMoveTick();
-			
-			if (enemy1.moveFinished()) {
-
-				enemy1.setHorizontalState(Enemy::HORIZONTAL_STATE::MOVE);
-				enemy1.setVerticalState(Enemy::VERTICAL_STATE::STOPV);
-			}
-				
-			if (enemy2.moveFinished()) {
-
-				enemy2.setHorizontalState(Enemy::HORIZONTAL_STATE::MOVE);
-				enemy2.setVerticalState(Enemy::VERTICAL_STATE::STOPV);
-			}
-					
-			if (enemy3.moveFinished()) {
-
-				enemy3.setHorizontalState(Enemy::HORIZONTAL_STATE::MOVE);
-				enemy3.setVerticalState(Enemy::VERTICAL_STATE::STOPV);
-				load = LoadState::NONE;
+					e.setHorizontalState(Enemy::HORIZONTAL_STATE::MOVE);
+					e.setVerticalState(Enemy::VERTICAL_STATE::STOPV);
+				}
 			}
 		}
 
@@ -801,6 +593,7 @@ void idle() {
 
 		fps = end_t - start_t;
 		if (fps > 0) fps = 1000 / fps;
+
 		start_t = end_t; // 프레임 제어 끝
 	}
 
@@ -861,9 +654,9 @@ void display() {
 
 		playerrenderwithblink();
 
-		enemy1.draw();
-		enemy2.draw();
-		enemy3.draw();
+		for (auto& e : stages[static_cast<int>(state)].getStageEnemy()) {
+			e.draw();
+		}
 
 		//3D 요소들 draw
 		glEnable(GL_DEPTH_TEST);
@@ -913,6 +706,7 @@ void keyboardDown(unsigned char key, int x, int y) {
 		else if (state != StageState::BEGIN) {
 			if (player.canShootBubble() && load == NONE) {
 				bubbles.push_back(player.shootBubble());
+				alh.playMusicBubbleShotted();
 			}
 		}
 	}
@@ -1044,7 +838,7 @@ void gameLoop() {
 
 	// init GLUT and create Window
 	
-	playMusicBackground();
+	alh.playMusicBackground();
 
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 	glutInitWindowPosition(WINDOW_X, WINDOW_Y);
@@ -1069,9 +863,9 @@ int main(int argc, char** argv) {
 
 	glutInit(&argc, argv);
 
-	setUpAudio();
+	alh.setUpAudio();
 	gameLoop();
-	cleanUpAudio();
+	alh.cleanUpAudio();
 
 	return 0;
 }

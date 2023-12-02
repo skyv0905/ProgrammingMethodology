@@ -180,7 +180,6 @@ Bubble Player::shootBubble() {
 	bub.setMTL(m);
 	
 	bubbleCooldown = 0.7f; // 버블 재발동 대기시간
-	playMusicBubbleShotted();
 
 	return bub;
 }
