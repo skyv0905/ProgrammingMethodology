@@ -24,6 +24,7 @@ Enemy::Enemy(float x, float y, float z, float size, FACE f)  {
 	verticalState = FALL;
 	horizontalState = STOPH;
 	verticalState = STOPV;
+	moveTick = -1;
 }
 
 float Enemy::getSize() const {
@@ -51,7 +52,7 @@ void Enemy::mMoveTick() {
 	}
 }
 
-bool Enemy::moveFinished() const { // return moveTice == 0
+bool Enemy::moveFinished() const { // return moveTick == 0
 	return moveTick == 0;
 }
 
