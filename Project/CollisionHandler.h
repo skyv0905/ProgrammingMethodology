@@ -5,5 +5,5 @@
 class CollisionHandler
 {
 public:
-	void operator()(Player& player, vector<Enemy>& enemys);
+	void operator()(Player& player, vector<shared_ptr<Enemy>>& enemys);
 };

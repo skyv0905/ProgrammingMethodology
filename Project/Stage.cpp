@@ -29,13 +29,13 @@ void Stage::setStagePlatform(std::vector<std::string> info) {
 			}
 
 			else if (info[i].substr(j, 2) == "◀") {
-				Enemy en((x - 14) * PIXEL + (PLAYER_SIZE / 2.f), (y - 14) * PIXEL + (PLAYER_SIZE / 2.f), 0, PLAYER_SIZE, Enemy::LEFT);
+				auto en = std::make_shared<Enemy>((x - 14) * PIXEL + (PLAYER_SIZE / 2.f), (y - 14) * PIXEL + (PLAYER_SIZE / 2.f), 0, PLAYER_SIZE, Enemy::LEFT);
 				enemys.push_back(en);
 				enemy_count++;
 			}
 
 			else if (info[i].substr(j, 2) == "▶") {
-				Enemy en((x - 14) * PIXEL + (PLAYER_SIZE / 2.f), (y - 14) * PIXEL + (PLAYER_SIZE / 2.f), 0, PLAYER_SIZE, Enemy::RIGHT);
+				auto en = std::make_shared<Enemy>((x - 14) * PIXEL + (PLAYER_SIZE / 2.f), (y - 14) * PIXEL + (PLAYER_SIZE / 2.f), 0, PLAYER_SIZE, Enemy::RIGHT);
 				enemys.push_back(en);
 				enemy_count++;
 			}
@@ -52,8 +52,12 @@ std::vector<Platform>& Stage::getStagePlatform() {
 	return platforms;
 }
 
-std::vector<Enemy>& Stage::getStageEnemy() {
+std::vector<std::shared_ptr<Enemy>>& Stage::getStageEnemy() {
 	return enemys;
+}
+
+bool Stage::stageEnds() {
+	return enemys.size() == 0;
 }
 
 float Stage::getFirstTransition() { // 화면 전환 관리
@@ -70,6 +74,15 @@ void Stage::startFirstTransition() {
 
 void Stage::startSecondTransition() {
 	secondTransition = -WINDOW_HEIGHT;
+}
+
+// DEAD된 ENEMY 제거
+void Stage::deleteDeadEnemy() {
+	for (int i = enemys.size(); i > 0; i--) {
+		if (enemys[i - 1]->isDead()) {
+			enemys.erase(enemys.begin() + i - 1);
+		}
+	}
 }
 
 Vector3f Stage::getPlayerOrigin() {

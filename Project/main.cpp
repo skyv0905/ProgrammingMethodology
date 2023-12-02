@@ -83,18 +83,18 @@ void startBlink() {
 	blinkStartTime = getCurrentTime();
 }
 
-int playerrenderwithblink() {
+void playerrenderwithblink() {
 
 	if (blinking) {
 	
 		long long currentTime = getCurrentTime();
 
-		if (currentTime - blinkStartTime > 3) {
+		if (currentTime - blinkStartTime > 1) {
 
 			player.setExState(Player::EX_STATE::FREE);
 
 			blinking = false;
-			return 0;
+			return;
 		}
 
 		else {
@@ -102,9 +102,9 @@ int playerrenderwithblink() {
 			bool renderplayerornot = (currentTime - blinkStartTime) % 2 == 0;
 			if (renderplayerornot) {
 
-				player.draw();
+				//player.draw();
 			}
-
+			player.draw();
 		}
 	}
 
@@ -126,12 +126,12 @@ void initialize() {
 
 	// 메인화면 이미지 로딩 0
 	Texture mainImage;
-	mainImage.initializeTexture("Bubble_Bobble_Cover.jpeg");
+	mainImage.initializeTexture("resources/Bubble_Bobble_Cover.jpeg");
 	textures.push_back(mainImage);
 
 	// 플랫폼 이미지 로딩 6
 	auto num_img = 6; // 로딩 개수
-	string prefix_platform = "Platform_type";
+	string prefix_platform = "resources/Platform_type";
 	for (auto i = 1; i <= num_img; i++) {
 		Texture image;
 		cout << (prefix_platform + to_string(i) + ".png").c_str();
@@ -141,22 +141,22 @@ void initialize() {
 
 	// 플레이어 이미지 로딩 7
 	Texture playerimage;
-	playerimage.initializeTexture("Player.png");
+	playerimage.initializeTexture("resources/Player.png");
 	textures.push_back(playerimage);
 
 	// Enemy 이미지 로딩 8
 	Texture enemyimage;
-	enemyimage.initializeTexture("Enemy.png");
+	enemyimage.initializeTexture("resources/Enemy.png");
 	textures.push_back(enemyimage);
 
 	// GameOver 이미지 로딩 9
 	Texture gameover;
-	gameover.initializeTexture("Game_Over.png");
+	gameover.initializeTexture("resources/Game_Over.png");
 	textures.push_back(gameover);
 
 	// Life 이미지 로딩 10
 	Texture life;
-	life.initializeTexture("Life.png");
+	life.initializeTexture("resources/Life.png");
 	textures.push_back(life);
 
 	// MAIN
@@ -198,14 +198,6 @@ void initialize() {
 	platformInfo.push_back("■■      ▲                                        ■■");
 	platformInfo.push_back("■■■■■■■■■■■            ■■■■■■■■■■■");
 
-	Life life1(PIXEL, Vector3f(-300, -300, 0));
-	Life life2(PIXEL, Vector3f(-300 + PIXEL + 10, -300, 0));
-	Life life3(PIXEL, Vector3f(-300 + 2 * PIXEL + 20, -300, 0));
-
-	lifes.push_back(life1);
-	lifes.push_back(life2);
-	lifes.push_back(life3);
-
 	stage1.setStagePlatform(platformInfo);
 	stages.push_back(stage1);
 	platformInfo.clear();
@@ -225,27 +217,70 @@ void initialize() {
 	platformInfo.push_back("■■                                                ■■");
 	platformInfo.push_back("■■                                                ■■");
 	platformInfo.push_back("■■                                                ■■");
-	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■                  ▶                            ■■");
 	platformInfo.push_back("■■            ■■■■■■■■■■■■            ■■");
 	platformInfo.push_back("■■                                                ■■");
 	platformInfo.push_back("■■                                                ■■");
 	platformInfo.push_back("■■                                                ■■");
-	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■            ◀                    ◀            ■■");
 	platformInfo.push_back("■■▣▣      ▣▣▣▣▣        ▣▣▣▣▣      ▣▣■■");
 	platformInfo.push_back("■■                                                ■■");
 	platformInfo.push_back("■■                                                ■■");
 	platformInfo.push_back("■■                                                ■■");
-	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■                      ▶                        ■■");
 	platformInfo.push_back("■■▣▣▣▣▣▣      ▣▣▣▣▣▣      ▣▣▣▣▣▣■■");
 	platformInfo.push_back("■■                                                ■■");
 	platformInfo.push_back("■■                                                ■■");
-	platformInfo.push_back("■■                                          ▲    ■■");
 	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■                                          ▲    ■■");
 	platformInfo.push_back("■■■■■■■■■■■            ■■■■■■■■■■■");
 
 	stage2.setStagePlatform(platformInfo);
 	stages.push_back(stage2);
 	platformInfo.clear();
+
+	// STAGE 3
+	// Platform 생성
+	Stage stage3(3);
+	stage3.setStagePlatformTextureID(textures[2].getTextureID(), textures[5].getTextureID(), textures[3].getTextureID());
+	platformInfo.push_back("■■                ■■■■■■■■                ■■");
+	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■        ◀                                      ■■");
+	platformInfo.push_back("■■▣▣▣▣▣▣                                    ■■");
+	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■                ■■■■■■■■                ■■");
+	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■                                            ◀  ■■");
+	platformInfo.push_back("■■                                    ▣▣▣▣▣▣■■");
+	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■                                    ▣▣▣▣▣▣■■");
+	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■                ■■■■■■■■                ■■");
+	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■        ◀                                      ■■");
+	platformInfo.push_back("■■▣▣▣▣▣▣                                    ■■");
+	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■                                                ■■");
+	platformInfo.push_back("■■                        ▲                      ■■");
+	platformInfo.push_back("■■                ■■■■■■■■                ■■");
+
+	stage3.setStagePlatform(platformInfo);
+	stages.push_back(stage3);
+	platformInfo.clear();
+
+	//LIFE init
+	for (int i = 0; i < 3; i++) {
+		Life lf(PIXEL, Vector3f(-boundaryX + PIXEL / 2 + i * PIXEL, -boundaryY + PIXEL / 2, 0));
+		lifes.push_back(lf);
+	}
 
 	// 게임 STATE init
 	state = StageState::BEGIN;
@@ -360,7 +395,8 @@ void handleCollisionY(Player& player, Platform& platform, int collisionDetectedX
 	return;
 }
 
-bool bottomDetector(Player& player, Platform& platform, int i) { // 플레이어 아래의 바닥 유무 감지
+// 플레이어 아래의 바닥 유무 감지
+bool bottomDetector(Player& player, Platform& platform, int i) {
 	auto w = platform.getWidth();
 	auto d = (PLAYER_SIZE + w) / 2; // 접할 때 거리
 	auto center_pl = player.getCenter();
@@ -380,7 +416,8 @@ bool bottomDetector(Player& player, Platform& platform, int i) { // 플레이어
 	}
 }
 
-void bubbleCollisionHandler(int i) { // 버블 충돌 시 연결된 모든 버블 제거
+// 버블 충돌 시 연결된 모든 버블 제거
+void bubbleCollisionHandler(int i) {
 	queue<int> q;
 	q.push(i);
 	bubbles[i].setDeleted();
@@ -402,9 +439,11 @@ void bubbleCollisionHandler(int i) { // 버블 충돌 시 연결된 모든 버�
 	}
 }
 
-void deleteWillDeletedBubbles() { // DELETED 체크된 버블 모두 Vector에서 제거
+// DELETED 체크된 버블 모두 Vector에서 제거
+void deleteWillDeletedBubbles() {
 	for (int i = bubbles.size(); i > 0; i--) {
 		if (bubbles[i - 1].isWillDeleted()) {
+			bubbles[i - 1].setTrappedEnemyDead();
 			alh.playMusicBubblePopped();
 			bubbles.erase(bubbles.begin() + i - 1);
 			if (debugmode) cout << i - 1 << "번째 버블 삭제" << endl;
@@ -412,7 +451,8 @@ void deleteWillDeletedBubbles() { // DELETED 체크된 버블 모두 Vector에�
 	}
 }
 
-void deleteAllBubbles() { // 모든 버블 제거
+// 모든 버블 제거
+void deleteAllBubbles() {
 	bubbles.clear();
 }
 
@@ -458,25 +498,47 @@ void idle() {
 			for (auto i = 0; i < bubbles.size(); i++) { // 버블 이동
 				bubbles[i].move();
 
-				// 플레이어 - 버블간 충돌
+				// 적 - 버블간 충돌
 				if (bubbles[i].getState() == Bubble::GROWING) {
-					continue;
+					for (auto& e : stages[static_cast<int>(state)].getStageEnemy()) {
+						if (e->isTrapped() || e->isDead()) continue;
+
+						auto d = bubbles[i].getRadius() + (e->getSize() / 2); // 접할 때 거리
+						auto center_b = bubbles[i].getCenter();
+						auto center_e = e->getCenter();
+						float dx = center_e[0] - center_b[0];
+						float dy = center_e[1] - center_b[1];
+
+						if (abs(dx) < d && abs(dy) < d) { // 충돌 발생
+							if (debugmode) cout << "적과 버블 충돌 발생\n";
+							auto mid = (center_b + center_e) / 2;
+							mid[2] = 0.0f;
+							e->setExState(Enemy::TRAPPED);
+							e->setCenter(mid);
+							bubbles[i].handleCollisionWEnemy(mid, e);
+						}
+					}
 				}
 
-				auto d = bubbles[i].getRadius() + (PLAYER_SIZE / 2); // 접할 때 거리
-				auto center_b = bubbles[i].getCenter();
-				auto center_p = player.getCenter();
-				float dx = center_p[0] - center_b[0];
-				float dy = center_p[1] - center_b[1];
+				else {
+					// 플레이어 - 버블간 충돌
 
-				if (abs(dx) < d && abs(dy) < d) { // 충돌 발생
-					bubbleCollisionHandler(i); // 버블 충돌 시 연결된 모든 버블 제거
-					isBubbleCollisionDetected = true; // 버블과 충돌 확인
+					auto d = bubbles[i].getRadius() + (PLAYER_SIZE / 2); // 접할 때 거리
+					auto center_b = bubbles[i].getCenter();
+					auto center_p = player.getCenter();
+					float dx = center_p[0] - center_b[0];
+					float dy = center_p[1] - center_b[1];
+
+					if (abs(dx) < d && abs(dy) < d) { // 충돌 발생
+						bubbleCollisionHandler(i); // 버블 충돌 시 연결된 모든 버블 제거
+						isBubbleCollisionDetected = true; // 버블과 충돌 확인
+					}
 				}
 			}
 			if (isBubbleCollisionDetected) { // 버블과 충돌 확인 시
 				deleteWillDeletedBubbles(); // DELETED 체크된 버블 모두 Vector에서 제거
 			}
+			stages[static_cast<int>(state)].deleteDeadEnemy(); // DEAD된 ENEMY 제거
 
 			// 충돌 제어
 			int i = 0; // 디버깅 용도
@@ -537,8 +599,19 @@ void idle() {
 			else player.setHorizontalState(Player::STOPH);
 
 			for (auto& e : stages[static_cast<int>(state)].getStageEnemy()) {
-				e.move();
-				e.setFace(e.getFace());
+				e->move();
+				e->setFace(e->getFace());
+			}
+
+			// 스테이지 클리어 체크
+			if (stages[static_cast<int>(state)].stageEnds()) {
+				auto nextStage = static_cast<int>(state) + 1;
+				if (debugmode) cout << "스테이지 " << nextStage << "로 이동" << endl;
+				deleteAllBubbles(); // 모든 버블 제거
+				state = static_cast<StageState>(nextStage); // 스테이지 + 1
+				stages[nextStage - 1].startSecondTransition(); // 이전 화면 전환 효과
+				stages[nextStage].startFirstTransition(); // 다음 화면 전환 효과
+				load = LOAD_STAGE; // 로드 상태 설정
 			}
 		}
 
@@ -567,8 +640,8 @@ void idle() {
 				load = LoadState::LOAD_ENEMY;
 
 				for (auto& e : stages[static_cast<int>(state)].getStageEnemy()) {
-					e.setVerticalState(Enemy::VERTICAL_STATE::FALL);
-					e.moveTo(20.0f);
+					e->setVerticalState(Enemy::VERTICAL_STATE::FALL);
+					e->moveTo(20.0f);
 				}
 			}
 		}
@@ -576,14 +649,14 @@ void idle() {
 		if (load == LOAD_ENEMY) { // 적 로드
 
 			for (auto& e : stages[static_cast<int>(state)].getStageEnemy()) {
-				e.move();
-				e.mMoveTick();
+				e->move();
+				e->mMoveTick();
 
-				if (e.moveFinished()) {
+				if (e->moveFinished()) {
 					load = LoadState::NONE;
 
-					e.setHorizontalState(Enemy::HORIZONTAL_STATE::MOVE);
-					e.setVerticalState(Enemy::VERTICAL_STATE::STOPV);
+					e->setHorizontalState(Enemy::HORIZONTAL_STATE::MOVE);
+					e->setVerticalState(Enemy::VERTICAL_STATE::STOPV);
 				}
 			}
 		}
@@ -655,12 +728,6 @@ void display() {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		playerrenderwithblink();
-
-		for (auto& e : stages[static_cast<int>(state)].getStageEnemy()) {
-			e.draw();
-		}
-
 		//3D 요소들 draw
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_LIGHTING);
@@ -669,17 +736,28 @@ void display() {
 		light.draw();
 
 		//버블 draw
+		glPushMatrix();
+		glTranslatef(0, 0, -100.0f);
 		for (auto& bubble : bubbles) {
 			bubble.draw();
+		}
+		glPopMatrix();
+		glDisable(light.getID());
+		glDisable(GL_LIGHTING);
+		glDisable(GL_DEPTH_TEST);
+
+		for (auto& e : stages[static_cast<int>(state)].getStageEnemy()) {
+			e->draw();
 		}
 
 		for (const Life& l : lifes) {
 			l.draw();
 		}
+
+		playerrenderwithblink();
+
+		glDisable(GL_BLEND);
 	}
-	glDisable(light.getID());
-	glDisable(GL_LIGHTING);
-	glDisable(GL_DEPTH_TEST);
 
 	if (fpsShow) {
 		glPushMatrix(); // 프레임 업데이트 시간 확인
@@ -831,7 +909,7 @@ void reshape(int w, int h) {
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(-boundaryX * wRatio, boundaryX * wRatio, -boundaryY * hRatio, boundaryY * hRatio, -100.0, 100.0);
+	glOrtho(-boundaryX * wRatio, boundaryX * wRatio, -boundaryY * hRatio, boundaryY * hRatio, -500.0, 500.0);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -866,7 +944,6 @@ int main(int argc, char** argv) {
 
 	glutInit(&argc, argv);
 
-	alh.setUpAudio();
 	gameLoop();
 	alh.cleanUpAudio();
 

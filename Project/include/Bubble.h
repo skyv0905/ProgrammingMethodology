@@ -2,6 +2,8 @@
 
 #include "Material.h"
 #include "Constants.h"
+#include "Enemy.h"
+#include <memory>
 
 class Bubble {
 public:
@@ -21,6 +23,8 @@ public:
 	void setVelocity(const Vector3f& v);
 	Vector3f getVelocity() const;
 	bool isWillDeleted() const;
+	bool enemyTrapped() const;
+	void setTrappedEnemyDead();
 	void setDeleted();
 	
 	void setMTL(const Material& m);
@@ -28,6 +32,7 @@ public:
 	STATE getState();
 
 	void handleCollision(Vector3f center, float x);
+	void handleCollisionWEnemy(Vector3f center, std::shared_ptr<Enemy> enemy);
 	void move();
 	void toInside();
 	void draw() const;
@@ -44,4 +49,6 @@ private:
 	Material mtl;
 
 	STATE bubbleState;
+
+	std::shared_ptr<Enemy> trappedEnemy;
 };

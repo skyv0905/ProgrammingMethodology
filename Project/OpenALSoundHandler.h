@@ -7,6 +7,10 @@
 class OpenALSoundHandler {
 	/*-----------------------------------------------------Variables For Playing Music----------------------------------------------------------*/
 public:
+	OpenALSoundHandler() {
+		setUpAudio();
+	}
+
 	// OpenAL 초기화
 	ALCdevice* device;
 	ALCcontext* context;
@@ -129,11 +133,11 @@ void OpenALSoundHandler::setUpAudio() {
 
 	/*------------------------- 오디오 데이터 로드 ---------------------------*/
 
-	loadWavFile("Background.wav", audioDataBackground, &sizebackground, &frequencybackground, &formatbackground);
-	loadWavFile("Bubble_Popped.wav", audioDataBubblePopped, &sizepopped, &frequencypopped, &formatpopped);
-	loadWavFile("Bubble_Shotted.wav", audioDataBubbleShotted, &sizeshotted, &frequencyshotted, &formatshotted);
-	loadWavFile("Game_Succeeded.wav", audioDataGameSucceeded, &sizesucceeded, &frequencysucceeded, &formatsucceeded);
-	loadWavFile("Game_Over.wav", audioDataGameOver, &sizeover, &frequencyover, &formatover);
+	loadWavFile("resources/title.wav", audioDataBackground, &sizebackground, &frequencybackground, &formatbackground);
+	loadWavFile("resources/Bubble_Popped.wav", audioDataBubblePopped, &sizepopped, &frequencypopped, &formatpopped);
+	loadWavFile("resources/Bubble_Shotted.wav", audioDataBubbleShotted, &sizeshotted, &frequencyshotted, &formatshotted);
+	loadWavFile("resources/Game_Succeeded.wav", audioDataGameSucceeded, &sizesucceeded, &frequencysucceeded, &formatsucceeded);
+	loadWavFile("resources/Game_Over.wav", audioDataGameOver, &sizeover, &frequencyover, &formatover);
 
 	// 버퍼 생성
 	alGenBuffers(1, &bufferbackground);

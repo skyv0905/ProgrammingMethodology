@@ -22,7 +22,9 @@ Player::Player(float x, float y, float z, float size) {
 	face = RIGHT;
 	horizontalState = STOPH;
 	verticalState = STOPV;
+	exState = FREE;
 	bubbleCooldown = 0;
+	bUnderAttack = false;
 	life = 3;
 }
 
@@ -169,12 +171,12 @@ Bubble Player::shootBubble() {
 	Material m;
 	std::random_device rd;
 	std::mt19937 gen(rd());
-	std::uniform_real_distribution<float> r(0.0f, 1.0f);
+	std::uniform_real_distribution<float> r(0.5f, 1.0f);
 
 	m.setEmission(0.1f, 0.1f, 0.1f, 1.0f);
 	m.setAmbient(r(gen), r(gen), r(gen), 1.0f);
 	m.setDiffuse(0.7f, 0.7f, 0.7f, 1.0f);
-	m.setSpecular(1.0f, 1.0f, 1.0f, 1.0f);
+	m.setSpecular(1.0f, 1.0f, 1.0f, 0.8f);
 	m.setShininess(10.0f);
 
 	bub.setMTL(m);

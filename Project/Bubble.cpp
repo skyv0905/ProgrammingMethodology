@@ -7,12 +7,14 @@ Bubble::Bubble() {
 	bubbleState = GROWING;
 	size = 1.0f / 10;
 	willDeleted = false;
+	trappedEnemy = nullptr;
 }
 
 Bubble::Bubble(float r, int sl, int st) : radius(r), slice(sl), stack(st) {
 	bubbleState = GROWING;
 	size = 1.0f / 10;
 	willDeleted = false;
+	trappedEnemy = nullptr;
 }
 
 void Bubble::setRadius(float r) {
@@ -64,8 +66,18 @@ bool Bubble::isWillDeleted() const {
 	return willDeleted;
 }
 
+bool Bubble::enemyTrapped() const {
+	return trappedEnemy != nullptr;
+}
+
 void Bubble::setDeleted() {
 	willDeleted = true;
+}
+
+void Bubble::setTrappedEnemyDead() {
+	if (trappedEnemy) {
+		trappedEnemy->setExState(Enemy::DEAD);
+	}
 }
 
 void Bubble::setMTL(const Material& m) {
@@ -103,8 +115,19 @@ void Bubble::handleCollision(Vector3f center, float x) {
 	}
 }
 
+void Bubble::handleCollisionWEnemy(Vector3f center, std::shared_ptr<Enemy> enemy) {
+	this->center = center;
+	setState(UP);
+	trappedEnemy = enemy;
+}
+
 void Bubble::move() {
-	if (bubbleState == STOP) return; // 정지 상태
+	if (bubbleState == STOP) {
+		if (enemyTrapped()) {
+			trappedEnemy->setCenter(center);
+		}
+		return; // 정지 상태
+	}
 
 	if (bubbleState == GROWING) { // 커지는 중
 		size += 1.0f / 10;
@@ -114,6 +137,9 @@ void Bubble::move() {
 	}
 	center = center + velocity;
 	toInside();
+	if (enemyTrapped()) {
+		trappedEnemy->setCenter(center);
+	}
 }
 
 void Bubble::toInside() {

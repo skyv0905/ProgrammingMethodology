@@ -8,7 +8,7 @@ class Player
 {
 public:
 	enum FACE { LEFT, RIGHT }; // 바라보는 방향 상태
-	enum HORIZONTAL_STATE { STOPH , MOVE }; // 좌우 이동 상태
+	enum HORIZONTAL_STATE { STOPH, MOVE }; // 좌우 이동 상태
 	enum VERTICAL_STATE { STOPV, JUMP, FALL }; // 상하 이동 상태
 	enum EX_STATE { FREE, FORCEMOVING, COLLISION }; // 기타 상태 #FREE : 제한 없음, #FORCEMOVING : 스테이지 시작 시 강제 이동 상태, #INVINCIBLE : 무적 상태
 

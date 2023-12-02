@@ -20,6 +20,7 @@ Enemy::Enemy(float x, float y, float z, float size, FACE f)  {
 	center[0] = x; center[1] = boundaryY + size; center[2] = z;
 	this->size = size;
 	face = f;
+	angle = 0;
 	verticalState = FALL;
 	horizontalState = STOPH;
 	verticalState = STOPV;
@@ -66,41 +67,41 @@ void Enemy::moveTo(float tick) { // Vector3f를 받아서 tick프레임 안에 �
 //속도에 따라 Player의 위치를 update하는 함수. 본문의 idle function에 삽입.
 
 void Enemy::move() {
+	if (!isTrapped()) {
+		center = center + velocity;
 
-	center = center + velocity;
+		if (moveFinished()) {
 
-	if (moveFinished() && load == NONE) {
+			for (std::vector<Platform>::iterator itr = stages[static_cast<int>(state)].getStagePlatform().begin(); itr != stages[static_cast<int>(state)].getStagePlatform().end(); ++itr) {
 
-		for (std::vector<Platform>::iterator itr = stages[static_cast<int>(state)].getStagePlatform().begin(); itr != stages[static_cast<int>(state)].getStagePlatform().end(); ++itr) {
+				if ((this->center[1] - itr->getCenter()[1]) == (this->size / 2.f + PIXEL / 2.f)
+					&& (this->center[0] - itr->getCenter()[0]) < PIXEL / 2
+					&& (this->center[0] - itr->getCenter()[0]) > -PIXEL / 2) {
 
-			if ( (this->center[1] - itr->getCenter()[1]) == (this->size / 2.f + PIXEL / 2.f)
-				&& (this->center[0] - itr->getCenter()[0]) < PIXEL / 2
-				&& (this->center[0] - itr->getCenter()[0]) > -PIXEL / 2) {
+					if (this->face == RIGHT) {
 
-				if (this->face == RIGHT) {
+						std::vector<Platform>::iterator next_itr = ++itr;
+						--itr;
 
-					std::vector<Platform>::iterator next_itr = ++itr;
-					--itr;
-
-					if ((next_itr->getCenter()[0] - itr->getCenter()[0]) > PIXEL) {
-						face = LEFT;
-						setVelocity(Vector3f(-5, 0, 0));
+						if ((next_itr->getCenter()[0] - itr->getCenter()[0]) > PIXEL) {
+							face = LEFT;
+							setVelocity(Vector3f(-5, 0, 0));
+						}
 					}
-				}
 
-				else if (this->face == LEFT) {
+					else if (this->face == LEFT) {
 
-					std::vector<Platform>::iterator before_itr = --itr;
-					++itr;
+						std::vector<Platform>::iterator before_itr = --itr;
+						++itr;
 
-					if ((before_itr->getCenter()[0] - itr->getCenter()[0]) < -PIXEL) {
-						face = RIGHT;
-						setVelocity(Vector3f(5, 0, 0));
+						if ((before_itr->getCenter()[0] - itr->getCenter()[0]) < -PIXEL) {
+							face = RIGHT;
+							setVelocity(Vector3f(5, 0, 0));
+						}
 					}
 				}
 			}
 		}
-
 	}
 }
 
@@ -165,9 +166,25 @@ void Enemy::setVerticalState(VERTICAL_STATE hState) {
 	setVelocity(new_velocity);
 }
 
+void Enemy::setExState(EX_STATE exState) {
+	this->exState = exState;
+	switch (exState) {
+	case TRAPPED:
+		size *= 0.8;
+		break;
+	}
+}
+
+bool Enemy::isDead() const {
+	return exState == DEAD;
+}
+
+bool Enemy::isTrapped() const {
+	return exState == TRAPPED;
+}
 /*----------------- Draw ------------------*/
 
-void Enemy::draw() const{
+void Enemy::draw() {
 
 	glEnable(GL_TEXTURE_2D); // 텍스쳐작업
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
@@ -198,19 +215,32 @@ void Enemy::draw() const{
 		glPopMatrix();
 	}
 
+	glPopMatrix();
 	glDisable(GL_TEXTURE_2D);
 }
 
-void Enemy::drawTexture(int face) const{
+void Enemy::drawTexture(int face) {
+
+	glPushMatrix();
+
+	glTranslatef(center[0], center[1], 0);
+
+	if (isTrapped()) { // 갇힌 상태에 회전작업
+		glRotatef(angle, 0, 0, 1);
+		//glScalef(0.8f, 0.8f, 0.8f);
+		angle = angle + 0.5f;
+	}
 
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0f, 0.0f);
-	glVertex2f(center[0] - (size / 2) * face, center[1] - size / 2);
+	glVertex2f(- (size / 2) * face, - size / 2);
 	glTexCoord2f(0.0f, 1.0f);
-	glVertex2f(center[0] - (size / 2) * face, center[1] + size / 2);
+	glVertex2f(- (size / 2) * face, size / 2);
 	glTexCoord2f(1.0f, 1.0f);
-	glVertex2f(center[0] + (size / 2) * face, center[1] + size / 2);
+	glVertex2f((size / 2) * face, size / 2);
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex2f(center[0] + (size / 2) * face, center[1] - size / 2);
+	glVertex2f((size / 2) * face, - size / 2);
 	glEnd();
+
+	glPopMatrix();
 }

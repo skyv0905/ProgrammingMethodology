@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "Player.h"
+#include "Vector3f.h"
 
 class Enemy {
 public:
@@ -8,12 +8,16 @@ public:
 	enum FACE { LEFT, RIGHT };
 	enum HORIZONTAL_STATE { STOPH, MOVE };
 	enum VERTICAL_STATE { STOPV, FALL };
+	enum EX_STATE { ALIVE, TRAPPED, DEAD };
 
 	Enemy(float x, float y, float z, float size, FACE f);
 
 	void setHorizontalState(HORIZONTAL_STATE hState);
 	HORIZONTAL_STATE getHorizontalState();
 	void setVerticalState(VERTICAL_STATE hState);
+	void setExState(EX_STATE exState);
+	bool isDead() const;
+	bool isTrapped() const;
 
 	void setCenter(const Vector3f& c);
 	Vector3f getCenter() const;
@@ -32,8 +36,8 @@ public:
 
 	void moveTo(float tick); // tick시간안에 origin 위치로 플레이어를 이동하게 velocity 설정
 
-	void draw() const;
-	void drawTexture(int face) const;
+	void draw();
+	void drawTexture(int face);
 
 private:
 
@@ -42,9 +46,11 @@ private:
 	Vector3f center;
 	Vector3f velocity;
 	float size;
+	float angle;
 
 	VERTICAL_STATE verticalState;
 	HORIZONTAL_STATE horizontalState;
+	EX_STATE exState;
 
 	int moveTick;
 };
