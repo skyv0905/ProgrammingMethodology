@@ -260,12 +260,12 @@ void initialize() {
 	platformInfo.push_back("■■                                                ■■");
 	platformInfo.push_back("■■                ▶                              ■■");
 	platformInfo.push_back("■■                ■■■■■■■■                ■■");
-	platformInfo.push_back("■■                                                ■■");
-	platformInfo.push_back("■■                                                ■■");
-	platformInfo.push_back("■■                                                ■■");
-	platformInfo.push_back("■■                                                ■■");
-	platformInfo.push_back("■■                                                ■■");
-	platformInfo.push_back("■■                            ◀                  ■■");
+	platformInfo.push_back("■■                              ■                ■■");
+	platformInfo.push_back("■■                              ■                ■■");
+	platformInfo.push_back("■■                              ■                ■■");
+	platformInfo.push_back("■■                              ■                ■■");
+	platformInfo.push_back("■■                              ■                ■■");
+	platformInfo.push_back("■■                          ◀  ■                ■■");
 	platformInfo.push_back("■■                ■■■■■■■■                ■■");
 	platformInfo.push_back("■■                                                ■■");
 	platformInfo.push_back("                                                        ");
