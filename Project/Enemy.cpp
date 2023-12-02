@@ -108,11 +108,13 @@ void Enemy::move() {
 					if (abs(center[0] - center_p[0]) < d && abs(center[1] - center_p[1]) < d) {
 						if (face == LEFT) {
 							face = RIGHT;
+							setCenter(Vector3f(center_p[0] + d, center[1], center[2]));
 							setVelocity(Vector3f(5, 0, 0));
 							break;
 						}
 						else{
 							face = LEFT;
+							setCenter(Vector3f(center_p[0] - d, center[1], center[2]));
 							setVelocity(Vector3f(-5, 0, 0));
 							break;
 						}

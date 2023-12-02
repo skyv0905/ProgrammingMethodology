@@ -52,7 +52,7 @@ bool bPressDown;
 bool fpsShow;
 bool PlayerIsOnPlatform;
 
-bool debugmode = true; // 디버깅모드
+bool debugmode = false; // 디버깅모드
 
 int globalTimeCount = 0; // 0~60
 
@@ -601,16 +601,18 @@ void idle() {
 				player.setVerticalState(Player::FALL);
 			}
 
-			if (bPressLeft || bPressRight) { // 방향 전환
+			// 플레이어 방향 전환
+			if (bPressLeft || bPressRight) {
 
 				player.setFace(bPressLeft ? Player::LEFT : Player::RIGHT);
 				player.setHorizontalState(player.HORIZONTAL_STATE::MOVE);
 			}
 			else player.setHorizontalState(Player::STOPH);
 
+			// 적 이동
 			for (auto& e : stages[static_cast<int>(state)].getStageEnemy()) {
 				e->move();
-				e->setFace(e->getFace());
+				//e->setFace(e->getFace());
 			}
 
 			// 스테이지 클리어 체크
