@@ -176,10 +176,33 @@ void Bubble::draw() const {
 	glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
 	glMaterialfv(GL_FRONT, GL_SHININESS, shininess);
 
+	drawOneBubble();
+
+	glPushMatrix(); // 주어진 범위 이탈 시 자연스럽게 보이기 위한 더미 이미지
+	glTranslatef(-WINDOW_WIDTH, 0.0f, 0.0f);
+	drawOneBubble();
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(WINDOW_WIDTH, 0.0f, 0.0f);
+	drawOneBubble();
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(0.0f, -WINDOW_HEIGHT, 0.0f);
+	drawOneBubble();
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(0.0f, WINDOW_HEIGHT, 0.0f);
+	drawOneBubble();
+	glPopMatrix();
+}
+
+void Bubble::drawOneBubble() const {
 	glPushMatrix();
 	glTranslatef(center[0], center[1], center[2]);
 	glScalef(size, size, size);
 	glutSolidSphere(radius, slice, stack);
 	glPopMatrix();
 }
-

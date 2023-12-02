@@ -36,6 +36,7 @@ public:
 	void move();
 	void toInside();
 	void draw() const;
+	void drawOneBubble() const;
 
 private:
 	float radius;

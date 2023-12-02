@@ -416,6 +416,17 @@ bool bottomDetector(Player& player, Platform& platform, int i) {
 	}
 }
 
+// 연결된 버블 감지
+bool bubbleChainCollisionDetector(Vector3f c1, Vector3f c2, float r1, float r2) {
+	auto distance = sqrt(pow((c1[0] - c2[0]), 2) +
+		pow((c1[1] - c2[1]), 2) +
+		pow((c1[2] - c2[2]), 2));
+	if (distance <= r1 + r2) {
+		return true;
+	}
+	else return false;
+}
+
 // 버블 충돌 시 연결된 모든 버블 제거
 void bubbleCollisionHandler(int i) {
 	queue<int> q;
@@ -425,12 +436,32 @@ void bubbleCollisionHandler(int i) {
 		int t = q.front();
 		for (auto j = 0; j < bubbles.size(); j++) {
 			if (bubbles[j].isWillDeleted()) continue;
-			auto c1 = bubbles[j].getCenter();
-			auto c2 = bubbles[t].getCenter();
-			auto distance = sqrt(pow((c1[0] - c2[0]), 2) +
-				pow((c1[1] - c2[1]), 2) +
-				pow((c1[2] - c2[2]), 2));
-			if (distance <=	bubbles[j].getRadius() + bubbles[t].getRadius()) {
+
+			auto c1 = bubbles[j].getCenter(); // 체크할 대상
+			auto c2 = bubbles[t].getCenter(); // 기준
+			auto r1 = bubbles[j].getRadius();
+			auto r2 = bubbles[t].getRadius();
+			bool willdelete = false;
+
+			if (bubbleChainCollisionDetector(c1, c2, r1, r2)) {
+				willdelete = true;
+			}
+
+			if (c2[1] + r2 > boundaryY && bubbleChainCollisionDetector(c1, c2 + Vector3f(0.0f, -WINDOW_HEIGHT, 0.0f), r1, r2)) { // 경계를 넘어선 버블에 대한
+				willdelete = true;
+			}
+			else if (c2[1] - r2 < -boundaryY && bubbleChainCollisionDetector(c1, c2 + Vector3f(0.0f, WINDOW_HEIGHT, 0.0f), r1, r2)) {
+				willdelete = true;
+			}
+
+			if (c2[0] + r2 > boundaryX && bubbleChainCollisionDetector(c1, c2 + Vector3f(-WINDOW_WIDTH, 0.0f, 0.0f), r1, r2)) {
+				willdelete = true;
+			}
+			else if (c2[0] - r2 < -boundaryX && bubbleChainCollisionDetector(c1, c2 + Vector3f(WINDOW_WIDTH, 0.0f, 0.0f), r1, r2)) {
+				willdelete = true;
+			}
+
+			if (willdelete) {
 				bubbles[j].setDeleted(); // 삭제할 버블에 willDeleted 체크
 				q.push(j);
 			}
