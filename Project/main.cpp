@@ -502,6 +502,7 @@ void idle() {
 		if (state == StageState::BEGIN) return; // IDLE함수는 state가 begin이면 아래를 실행하지 않음.
 		if (state == StageState::OVER) return; // IDLE함수는 state가 OVER이면 아래를 실행하지 않음.
 
+		alh.playMusicBackground();
 		/* ▼ 아래는 로드 중일때는 실행되지 않음 ▼ */
 
 		if (load == NONE) {
@@ -954,9 +955,6 @@ void reshape(int w, int h) {
 void gameLoop() {
 
 	// init GLUT and create Window
-	
-	alh.playMusicBackground();
-
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 	glutInitWindowPosition(WINDOW_X, WINDOW_Y);
 	glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);

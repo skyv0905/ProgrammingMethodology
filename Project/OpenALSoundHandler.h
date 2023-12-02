@@ -87,8 +87,11 @@ void OpenALSoundHandler::playMusicGameOver() {
 }
 
 void OpenALSoundHandler::playMusicBackground() {
-
-	alSourcePlay(sourcebackground);
+	ALint sourceState;
+	alGetSourcei(sourcebackground, AL_SOURCE_STATE, &sourceState);
+	if (!(sourceState == AL_PLAYING)) {
+		alSourcePlay(sourcebackground);
+	}
 }
 
 void OpenALSoundHandler::playMusicJump() {
