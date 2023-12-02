@@ -56,6 +56,8 @@ bool debugmode = true; // 디버깅모드
 bool blinking;
 clock_t blinkStartTime;
 
+int globalTimeCount = 0; // 0~60
+
 Player player(0, 0, 0.0f, PLAYER_SIZE);
 Life life(PIXEL, Vector3f(-boundaryX + PIXEL / 2, -boundaryY + PIXEL / 2, 0));
 
@@ -129,7 +131,7 @@ void initialize() {
 	mainImage.initializeTexture("resources/Bubble_Bobble_Cover.jpeg");
 	textures.push_back(mainImage);
 
-	// 플랫폼 이미지 로딩 6
+	// 플랫폼 이미지 로딩 1 ~ 6
 	auto num_img = 6; // 로딩 개수
 	string prefix_platform = "resources/Platform_type";
 	for (auto i = 1; i <= num_img; i++) {
@@ -154,15 +156,19 @@ void initialize() {
 	gameover.initializeTexture("resources/Game_Over.png");
 	textures.push_back(gameover);
 
-	// Life 이미지 로딩 10
-	Texture life;
-	life.initializeTexture("resources/Life.png");
-	textures.push_back(life);
+	// Life 이미지 로딩 10 ~ 13
+	auto num_life_img = 4; // 로딩 개수
+	string prefix_life = "resources/Life";
+	for (auto i = 1; i <= num_life_img; i++) {
+		Texture image;
+		cout << (prefix_life + to_string(i) + ".png").c_str();
+		image.initializeTexture((prefix_life + to_string(i) + ".png").c_str());
+		textures.push_back(image);
+	}
 
 	// MAIN
 	Stage main(0);
 	stages.push_back(main);
-
 
 	// STAGE 1
 	// Platform 생성
@@ -486,6 +492,13 @@ void idle() {
 	end_t = clock();
 
 	if ((float)(end_t - start_t) > 1000 / 30.0f) { // 프레임 제어
+
+		fps = end_t - start_t;
+		if (fps > 0) fps = 1000 / fps;
+
+		start_t = end_t;
+		globalTimeCount = (globalTimeCount + 1) % 60;
+
 		if (state == StageState::BEGIN) return; // IDLE함수는 state가 begin이면 아래를 실행하지 않음.
 		if (state == StageState::OVER) return; // IDLE함수는 state가 OVER이면 아래를 실행하지 않음.
 
@@ -692,10 +705,7 @@ void idle() {
 		}
 		/* ▲ 위는 로드 상태와 상관없이 실행됨 ▲ */
 
-		fps = end_t - start_t;
-		if (fps > 0) fps = 1000 / fps;
-
-		start_t = end_t; // 프레임 제어 끝
+		// 프레임 제어 끝
 	}
 
 	glutPostRedisplay();

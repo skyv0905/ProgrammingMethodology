@@ -5,12 +5,25 @@
 #include <GL/freeglut.h>
 
 extern std::vector<Texture> textures;
+extern int globalTimeCount;
 
 void Life::draw(int count) const {
 
 	glEnable(GL_TEXTURE_2D); // 텍스쳐작업
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-	glBindTexture(GL_TEXTURE_2D, textures[10].getTextureID());
+	auto gtc = globalTimeCount % 30;
+	if (gtc >= 0 && gtc < 21) {
+		glBindTexture(GL_TEXTURE_2D, textures[10].getTextureID());
+	}
+	else if (gtc >= 21 && gtc < 24) {
+		glBindTexture(GL_TEXTURE_2D, textures[11].getTextureID());
+	}
+	else if (gtc >= 24 && gtc < 27) {
+		glBindTexture(GL_TEXTURE_2D, textures[12].getTextureID());
+	}
+	else if (gtc >= 27 && gtc < 30) {
+		glBindTexture(GL_TEXTURE_2D, textures[13].getTextureID());
+	}
 
 	glPushMatrix();
 
