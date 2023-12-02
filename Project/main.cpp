@@ -52,10 +52,6 @@ bool PlayerIsOnPlatform;
 
 bool debugmode = true; // 디버깅모드
 
-// Blinking
-bool blinking;
-clock_t blinkStartTime;
-
 int globalTimeCount = 0; // 0~60
 
 Player player(0, 0, 0.0f, PLAYER_SIZE);
@@ -64,58 +60,6 @@ Life life(PIXEL, Vector3f(-boundaryX + PIXEL / 2, -boundaryY + PIXEL / 2, 0));
 Light light(boundaryX, boundaryY, boundaryX / 2, GL_LIGHT0);
 
 CollisionHandler colHandler;
-
-long long getCurrentTime() {
-
-	auto now = std::chrono::high_resolution_clock::now();
-	auto duration = now.time_since_epoch();
-	auto seconds = std::chrono::duration_cast<std::chrono::seconds>(duration).count();
-
-	return seconds;
-}
-
-bool iscurrentStateover() {
-
-	return state == StageState::OVER;
-}
-
-void startBlink() {
-
-	blinking = true;
-	blinkStartTime = getCurrentTime();
-}
-
-void playerrenderwithblink() {
-
-	if (blinking) {
-	
-		long long currentTime = getCurrentTime();
-
-		if (currentTime - blinkStartTime > 1) {
-
-			player.setExState(Player::EX_STATE::FREE);
-
-			blinking = false;
-			return;
-		}
-
-		else {
-
-			bool renderplayerornot = (currentTime - blinkStartTime) % 2 == 0;
-			if (renderplayerornot) {
-
-				//player.draw();
-			}
-			player.draw();
-		}
-	}
-
-	else {
-		player.draw();
-	}
-
-	glutPostRedisplay();
-}
 
 void initialize() {
 	// bool init
@@ -509,13 +453,12 @@ void idle() {
 
 			if (alh.sourceStateBackground == AL_STOPPED) { alh.playMusicBackground(); }
 
-			if (player.getExState() != Player::EX_STATE::COLLISION) {
+			if (!player.isInvincible()) {
 				colHandler(player, stages[static_cast<int>(state)].getStageEnemy());
 			}
 
 			if (player.getUnderAttack()) {
-				startBlink();
-				player.setExState(Player::EX_STATE::COLLISION);
+				player.setExState(Player::EX_STATE::INVINCIBLE);
 				player.setUnderAttack(false);
 
 				player.loseLife(); // life 감소
@@ -704,6 +647,9 @@ void idle() {
 		if (!player.canShootBubble()) { // 버블 재발사 대기시간 제어
 			player.mBubbleCooldown();
 		}
+		if (player.isInvincible()) {
+			player.mInvincible();
+		}
 		/* ▲ 위는 로드 상태와 상관없이 실행됨 ▲ */
 
 		// 프레임 제어 끝
@@ -790,7 +736,7 @@ void display() {
 			life.draw(i);
 		}
 
-		playerrenderwithblink();
+		player.draw();
 
 		glDisable(GL_BLEND);
 	}

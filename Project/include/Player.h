@@ -10,7 +10,7 @@ public:
 	enum FACE { LEFT, RIGHT }; // 바라보는 방향 상태
 	enum HORIZONTAL_STATE { STOPH, MOVE }; // 좌우 이동 상태
 	enum VERTICAL_STATE { STOPV, JUMP, FALL }; // 상하 이동 상태
-	enum EX_STATE { FREE, FORCEMOVING, COLLISION }; // 기타 상태 #FREE : 제한 없음, #FORCEMOVING : 스테이지 시작 시 강제 이동 상태, #INVINCIBLE : 무적 상태
+	enum EX_STATE { FREE, FORCEMOVING, INVINCIBLE }; // 기타 상태 #FREE : 제한 없음, #FORCEMOVING : 스테이지 시작 시 강제 이동 상태, #INVINCIBLE : 무적 상태
 
 	Player(float x, float y, float z, float size);
 
@@ -73,6 +73,9 @@ public:
 	void mMoveTick(); // 플레이어 초기 설정 이동 시간 프레임당 1씩 감소
 	bool moveFinished() const; // return moveTice == 0
 
+	void mInvincible();
+	bool isInvincible() const;
+
 	void moveTo(Vector3f dst, float tick); // Vector3f를 받아서 tick시간안에 그 위치로 플레이어를 이동하게 velocity 설정
 	void move();
 	void moveX();
@@ -92,7 +95,8 @@ protected:
 	VERTICAL_STATE verticalState;
 	EX_STATE exState;
 	float bubbleCooldown; // 버블 재발사 대기시간
-	int moveTick; // 플레이어 초기 설정 이동 시간
+	int moveTick; // 플레이어 초기 설정 이동 
+	int invincible; // 플레이어 재충돌 대기시간
 
 	bool bUnderAttack;
 	int life;

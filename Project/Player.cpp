@@ -17,11 +17,15 @@ Player::Player(float x, float y, float z, float size) {
 	this->size = size;
 	velocity[0] = 0; velocity[1] = 0, velocity[2] = 0;
 	center_before = center;
+
 	face = RIGHT;
 	horizontalState = STOPH;
 	verticalState = STOPV;
 	exState = FREE;
+
 	bubbleCooldown = 0;
+	moveTick = 0;
+	invincible = 0;
 	bUnderAttack = false;
 	setLife(3);
 }
@@ -167,6 +171,11 @@ bool Player::isFalling() const {
 void Player::setExState(EX_STATE eState) {
 
 	exState = eState;
+	switch (exState) {
+	case INVINCIBLE:
+		invincible = 45; // 30 == 1초간 무적
+		break;
+	}
 }
 
 //Player가 쏜 버블을 Bubble을 class로 한 객체로 생성하는 함수. 생성 위치는 플레이어의 위치. 크기느 player와 같게. 속도의 부호는 player의 방향에 따라서. MTL은 일정하게.
@@ -215,6 +224,19 @@ void Player::mMoveTick() {
 	if (moveTick < 0) {
 		moveTick = 0;
 	}
+}
+
+void Player::mInvincible() {
+	invincible--;
+
+	if (invincible <= 0) {
+		invincible = 0;
+		setExState(FREE);
+	}
+}
+
+bool Player::isInvincible() const {
+	return invincible != 0;
 }
 
 bool Player::moveFinished() const { // return moveTice == 0
@@ -279,6 +301,7 @@ void Player::toInside() {
 //Player를 그리는 함수. 왼쪽을 바라볼 때와 오른쪽을 바라볼 때 서로 다른 이미지로 mapping해야 함.
 
 void Player::draw() const {
+	/*
 	glColor3f(1.0f, 1.0f, 1.0f); // 플레이어 히트박스 표시. 디버깅 용도
 	glBegin(GL_LINE_LOOP);
 	glVertex2f(center[0] - (size / 2), center[1] - size / 2);
@@ -286,6 +309,9 @@ void Player::draw() const {
 	glVertex2f(center[0] + (size / 2), center[1] + size / 2);
 	glVertex2f(center[0] + (size / 2), center[1] - size / 2);
 	glEnd();
+	*/
+
+	if (isInvincible() && (invincible / 2) % 2 == 0) return;
 
 	glEnable(GL_TEXTURE_2D); // 텍스쳐작업
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
