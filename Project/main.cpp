@@ -37,7 +37,6 @@ LoadState load; // 로드 상태
 vector<Stage> stages;
 vector<Bubble> bubbles;
 vector<Texture> textures;
-vector<Life> lifes;
 
 OpenALSoundHandler alh;
 
@@ -58,6 +57,7 @@ bool blinking;
 clock_t blinkStartTime;
 
 Player player(0, 0, 0.0f, PLAYER_SIZE);
+Life life(PIXEL, Vector3f(-boundaryX + PIXEL / 2, -boundaryY + PIXEL / 2, 0));
 
 Light light(boundaryX, boundaryY, boundaryX / 2, GL_LIGHT0);
 
@@ -276,12 +276,6 @@ void initialize() {
 	stages.push_back(stage3);
 	platformInfo.clear();
 
-	//LIFE init
-	for (int i = 0; i < 3; i++) {
-		Life lf(PIXEL, Vector3f(-boundaryX + PIXEL / 2 + i * PIXEL, -boundaryY + PIXEL / 2, 0));
-		lifes.push_back(lf);
-	}
-
 	// 게임 STATE init
 	state = StageState::BEGIN;
 	load = LoadState::NONE;
@@ -493,6 +487,7 @@ void idle() {
 
 	if ((float)(end_t - start_t) > 1000 / 30.0f) { // 프레임 제어
 		if (state == StageState::BEGIN) return; // IDLE함수는 state가 begin이면 아래를 실행하지 않음.
+		if (state == StageState::OVER) return; // IDLE함수는 state가 OVER이면 아래를 실행하지 않음.
 
 		/* ▼ 아래는 로드 중일때는 실행되지 않음 ▼ */
 
@@ -509,11 +504,9 @@ void idle() {
 				player.setExState(Player::EX_STATE::COLLISION);
 				player.setUnderAttack(false);
 
-				player.setLife(player.getLife() - 1);
-				cout << player.getLife();
-				lifes.pop_back();
+				player.loseLife(); // life 감소
 
-				if (lifes.size() == 0) {
+				if (player.getLife() == 0) { // life  == 0
 
 					state = StageState::OVER;
 					alh.playMusicGameOver();
@@ -521,6 +514,7 @@ void idle() {
 					alSourceStop(alh.sourcebackground);
 					alSourceStop(alh.sourcepopped);
 					alSourceStop(alh.sourceshotted);
+					return;
 				}
 			}
 
@@ -781,8 +775,8 @@ void display() {
 			e->draw();
 		}
 
-		for (const Life& l : lifes) {
-			l.draw();
+		for (auto i = 0; i < player.getLife(); i++) {
+			life.draw(i);
 		}
 
 		playerrenderwithblink();
@@ -893,6 +887,7 @@ void specialKeyDown(int key, int x, int y) {
 		bPressUp = true;
 		if (!player.isJumping() && !player.isFalling() && load == NONE) {
 			player.setVerticalState(player.VERTICAL_STATE::JUMP);
+			alh.playMusicJump();
 		}
 	}
 

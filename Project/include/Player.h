@@ -16,6 +16,7 @@ public:
 
 	void setLife(int life);
 	int getLife();
+	void loseLife();
 
 	void setCenter(const Vector3f& c);
 	Vector3f getCenter() const;

@@ -6,7 +6,8 @@ class Life {
 
 public:
 	Life(int s, Vector3f c) : size(s), center(c) {}
-	void draw() const;
+	void draw(int count) const;
+	void drawTexture() const;
 
 private:
 

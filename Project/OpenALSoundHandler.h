@@ -21,18 +21,21 @@ public:
 	std::vector<char> audioDataBubbleShotted;
 	std::vector<char> audioDataGameSucceeded;
 	std::vector<char> audioDataGameOver;
+	std::vector<char> audioDataJump;
 
 	ALsizei sizebackground, frequencybackground;
 	ALsizei sizepopped, frequencypopped;
 	ALsizei sizeshotted, frequencyshotted;
 	ALsizei sizesucceeded, frequencysucceeded;
 	ALsizei sizeover, frequencyover;
+	ALsizei sizejump, frequencyjump;
 
 	ALenum formatbackground;
 	ALenum formatpopped;
 	ALenum formatshotted;
 	ALenum formatsucceeded;
 	ALenum formatover;
+	ALenum formatjump;
 
 	// 각 Wav 파일의 재생 상태 확인하는 변수들
 	ALint sourceStateBackground;
@@ -40,6 +43,7 @@ public:
 	ALint sourceStateShotted;
 	ALint sourceStateSucceeded;
 	ALint sourceStateOver;
+	ALint sourceStateJump;
 
 	// 각 Wav 파일의 재생을 위한 buffer와 source 변수들
 	ALuint bufferbackground, sourcebackground;
@@ -47,6 +51,7 @@ public:
 	ALuint buffersucceeded, sourcesucceeded;
 	ALuint bufferover, sourceover;
 	ALuint bufferpopped, sourcepopped;
+	ALuint bufferjump, sourcejump;
 
 	/*----------------------------------------Functions for Playing Music--------------------------------------------*/
 
@@ -55,6 +60,7 @@ public:
 	void playMusicBubbleShotted();
 	void playMusicGameSucceeded();
 	void playMusicGameOver();
+	void playMusicJump();
 	void loadWavFile(const std::string& filename, std::vector<char>& buffer, ALsizei* size, ALsizei* frequency, ALenum* format);
 	void setUpAudio();
 	void cleanUpAudio();
@@ -83,6 +89,11 @@ void OpenALSoundHandler::playMusicGameOver() {
 void OpenALSoundHandler::playMusicBackground() {
 
 	alSourcePlay(sourcebackground);
+}
+
+void OpenALSoundHandler::playMusicJump() {
+
+	alSourcePlay(sourcejump);
 }
 
 void OpenALSoundHandler::loadWavFile(const std::string& filename, std::vector<char>& buffer, ALsizei* size, ALsizei* frequency, ALenum* format) {
@@ -134,10 +145,11 @@ void OpenALSoundHandler::setUpAudio() {
 	/*------------------------- 오디오 데이터 로드 ---------------------------*/
 
 	loadWavFile("resources/title.wav", audioDataBackground, &sizebackground, &frequencybackground, &formatbackground);
-	loadWavFile("resources/Bubble_Popped.wav", audioDataBubblePopped, &sizepopped, &frequencypopped, &formatpopped);
+	loadWavFile("resources/pop.wav", audioDataBubblePopped, &sizepopped, &frequencypopped, &formatpopped);
 	loadWavFile("resources/Bubble_Shotted.wav", audioDataBubbleShotted, &sizeshotted, &frequencyshotted, &formatshotted);
 	loadWavFile("resources/Game_Succeeded.wav", audioDataGameSucceeded, &sizesucceeded, &frequencysucceeded, &formatsucceeded);
 	loadWavFile("resources/Game_Over.wav", audioDataGameOver, &sizeover, &frequencyover, &formatover);
+	loadWavFile("resources/Jump.wav", audioDataJump, &sizejump, &frequencyjump, &formatjump);
 
 	// 버퍼 생성
 	alGenBuffers(1, &bufferbackground);
@@ -145,6 +157,7 @@ void OpenALSoundHandler::setUpAudio() {
 	alGenBuffers(1, &buffershotted);
 	alGenBuffers(1, &buffersucceeded);
 	alGenBuffers(1, &bufferover);
+	alGenBuffers(1, &bufferjump);
 
 	// 소스 생성
 	alGenSources(1, &sourcebackground);
@@ -152,6 +165,7 @@ void OpenALSoundHandler::setUpAudio() {
 	alGenSources(1, &sourceshotted);
 	alGenSources(1, &sourcesucceeded);
 	alGenSources(1, &sourceover);
+	alGenSources(1, &sourcejump);
 
 	// 소스에 버퍼 연결
 
@@ -169,6 +183,13 @@ void OpenALSoundHandler::setUpAudio() {
 
 	alBufferData(bufferover, formatover, audioDataGameOver.data(), sizeover, frequencyover);
 	alSourcei(sourceover, AL_BUFFER, bufferover);
+
+	alBufferData(bufferjump, formatjump, audioDataJump.data(), sizejump, frequencyjump);
+	alSourcei(sourcejump, AL_BUFFER, bufferjump);
+
+	alSourcef(sourcebackground, AL_GAIN, 0.5f);
+	alSourcef(sourcepopped, AL_GAIN, 0.4f);
+	alSourcef(sourcejump, AL_GAIN, 0.5f);
 }
 
 void OpenALSoundHandler::cleanUpAudio() {
@@ -187,6 +208,9 @@ void OpenALSoundHandler::cleanUpAudio() {
 
 	alDeleteSources(1, &sourcesucceeded);
 	alDeleteBuffers(1, &buffersucceeded);
+
+	alDeleteSources(1, &sourcejump);
+	alDeleteBuffers(1, &bufferjump);
 
 	alcDestroyContext(context);
 	alcCloseDevice(device);

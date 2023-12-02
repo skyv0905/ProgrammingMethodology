@@ -10,8 +10,6 @@ extern std::vector<Texture> textures;
 extern bool bPressLeft;
 extern bool bPressRight;
 
-extern void playMusicBubbleShotted();
-
 //Player 생성자. 기본값으로는 왼쪽을 보고 있으며, 멈추어있는 상태.
 Player::Player(float x, float y, float z, float size) {
 
@@ -25,7 +23,7 @@ Player::Player(float x, float y, float z, float size) {
 	exState = FREE;
 	bubbleCooldown = 0;
 	bUnderAttack = false;
-	life = 3;
+	setLife(3);
 }
 
 Player::EX_STATE Player::getExState() {
@@ -51,6 +49,11 @@ void Player::setLife(int life) {
 int Player::getLife() {
 
 	return life;
+}
+
+void Player::loseLife() {
+
+	life--;
 }
 
 //Player의 중심 위치를 Vector3f 클래스의 객체를 받아 설정
