@@ -317,7 +317,7 @@ void Player::draw() const {
 		glBindTexture(GL_TEXTURE_2D, textures[14].getTextureID());
 	}
 	else {
-		if (isMoving()) {
+		if (isMoving() && !isFalling()) {
 			if ((globalTimeCount / 4) % 2 == 0) {
 				glBindTexture(GL_TEXTURE_2D, textures[15].getTextureID());
 			}
