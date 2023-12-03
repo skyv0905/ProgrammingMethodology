@@ -320,7 +320,7 @@ void Player::draw() const {
 	}
 	else {
 		if (isMoving() && !isFalling()) {
-			if ((globalTimeCount / 4) % 2 == 0) {
+			if ((globalTimeCount / 5) % 2 == 0) {
 				glBindTexture(GL_TEXTURE_2D, textures[15].getTextureID());
 			}
 			else {
