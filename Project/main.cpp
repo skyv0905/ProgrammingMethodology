@@ -394,6 +394,17 @@ bool bottomDetector(Player& player, Platform& platform, int i) {
 	}
 }
 
+bool bubblePlayerCollisionDetector(Vector3f c1, Vector3f c2, float d) {
+
+	float dx = c1[0] - c2[0];
+	float dy = c1[1] - c2[1];
+
+	if (abs(dx) < d && abs(dy) < d) { // 충돌 발생
+		return true;
+	}
+	else return false;
+}
+
 // 연결된 버블 감지
 bool bubbleChainCollisionDetector(Vector3f c1, Vector3f c2, float r1, float r2) {
 	auto distance = sqrt(pow((c1[0] - c2[0]), 2) +
@@ -538,13 +549,33 @@ void idle() {
 				else {
 					// 플레이어 - 버블간 충돌
 
-					auto d = bubbles[i].getRadius() + (PLAYER_SIZE / 2); // 접할 때 거리
+					auto d = bubbles[i].getRadius() + (player.getSize() / 2); // 접할 때 거리
 					auto center_b = bubbles[i].getCenter();
 					auto center_p = player.getCenter();
 					float dx = center_p[0] - center_b[0];
 					float dy = center_p[1] - center_b[1];
 
-					if (abs(dx) < d && abs(dy) < d) { // 충돌 발생
+					bool collision = false;
+
+					if (bubblePlayerCollisionDetector(center_b, center_p, d)) {
+						collision = true;
+					}
+
+					if (center_p[1] + player.getSize() >= boundaryY && bubblePlayerCollisionDetector(center_b, center_p + Vector3f(0.0f, -WINDOW_HEIGHT, 0.0f), d)) { // 경계를 넘어선 버블에 대한
+						collision = true;
+					}
+					else if (center_p[1] - player.getSize() <= -boundaryY && bubblePlayerCollisionDetector(center_b, center_p + Vector3f(0.0f, WINDOW_HEIGHT, 0.0f), d)) {
+						collision = true;
+					}
+
+					if (center_p[0] + player.getSize() >= boundaryX && bubblePlayerCollisionDetector(center_b, center_p + Vector3f(-WINDOW_WIDTH, 0.0f, 0.0f), d)) {
+						collision = true;
+					}
+					else if (center_p[0] - player.getSize() <= -boundaryX && bubblePlayerCollisionDetector(center_b, center_p + Vector3f(WINDOW_WIDTH, 0.0f, 0.0f), d)) {
+						collision = true;
+					}
+
+					if (collision) {
 						bubbleCollisionHandler(i); // 버블 충돌 시 연결된 모든 버블 제거
 						isBubbleCollisionDetected = true; // 버블과 충돌 확인
 					}
@@ -849,7 +880,7 @@ void keyboardDown(unsigned char key, int x, int y) {
 			load = LOAD_STAGE;
 		}
 
-		else if (state != StageState::BEGIN) {
+		else if (state != StageState::BEGIN && state != StageState::CLEAR && state != StageState::OVER) {
 			if (player.canShootBubble() && load == NONE) {
 				bubbles.push_back(player.shootBubble());
 				alh.playMusicBubbleShotted();
@@ -928,9 +959,11 @@ void specialKeyDown(int key, int x, int y) {
 	if (key == GLUT_KEY_UP) {
 
 		bPressUp = true;
-		if (!player.isJumping() && !player.isFalling() && load == NONE) {
-			player.setVerticalState(player.VERTICAL_STATE::JUMP);
-			alh.playMusicJump();
+		if (state != StageState::BEGIN && state != StageState::CLEAR && state != StageState::OVER) {
+			if (!player.isJumping() && !player.isFalling() && load == NONE) {
+				player.setVerticalState(player.VERTICAL_STATE::JUMP);
+				alh.playMusicJump();
+			}
 		}
 	}
 
